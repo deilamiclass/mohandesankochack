@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آکادمی برنامه‌نویسی و بازی‌سازی مهندس دیلمی — از اسکرچ تا پایتون</title>
+    <!-- فونت استاندارد فارسی وزیرمتن -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- فریم‌ورک Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        body {
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            direction: rtl;
+            text-align: right;
+            line-height: 1.85;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* =========================================================
+           ایزوله‌سازی ۱۰۰٪ کدهای انگلیسی و پرانتزها (جلوگیری از برعکس شدن)
+           ========================================================= */
+        code.ltr-code, .ltr-code {
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            display: inline-block !important;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+            font-weight: 700;
+            background-color: #f8fafc;
+            color: #0f172a;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 0.88em;
+            line-height: 1.4;
+            text-align: left !important;
+            vertical-align: middle;
+        }
+        pre.ltr-pre {
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            text-align: left !important;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+            background-color: #0f172a;
+            color: #34d399;
+            padding: 14px 16px;
+            border-radius: 14px;
+            overflow-x: auto;
+            line-height: 1.65;
+            margin: 0;
+        }
+        td.ltr-cell {
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            text-align: center !important;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           بلوک‌های ۱۰۰٪ فارسی اسکرچ (مطابق رنگ‌بندی رسمی اسکرچ)
+           ========================================================= */
+        .sb-motion {
+            background-color: #4C97FF;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 3px solid #2563EB;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);
+            margin: 2px;
+        }
+        .sb-control {
+            background-color: #FFAB19;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 3px solid #D97706;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.25);
+            margin: 2px;
+        }
+        .sb-variable {
+            background-color: #FF8C1A;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 3px solid #C2410C;
+            box-shadow: 0 2px 4px rgba(234, 88, 12, 0.25);
+            margin: 2px;
+        }
+        .sb-sensing {
+            background-color: #59C059;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 3px solid #15803D;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+            margin: 2px;
+        }
+
+        /* جداول استاندارد */
+        table.booklet-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table.booklet-table th, table.booklet-table td {
+            border: 1.5px solid #cbd5e1;
+            padding: 10px 12px;
+            vertical-align: middle;
+        }
+
+        /* برجسته‌سازی گام فعال در فلوچارت */
+        .flow-node-active {
+            transform: scale(1.03);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.45) !important;
+            z-index: 10;
+        }
+
+        /* کارت‌های ویترین جزوه‌ها */
+        .booklet-hub-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .booklet-hub-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* تنظیمات اختصاصی چاپ و ذخیره PDF در قالب A4 */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            body {
+                background: #ffffff !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            #portalViewHome {
+                display: none !important;
+            }
+            #portalViewBooklet {
+                display: block !important;
+            }
+            .portal-container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+            .section-card {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                box-shadow: none !important;
+                border: 1.5px solid #cbd5e1 !important;
+                margin-bottom: 14px !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- =====================================================================
+         نوار ناوبری سراسری (Header) — بدون پنل اضافی، کاملاً سبک و سریع
+         ===================================================================== -->
+    <header class="no-print sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md text-white shadow-xl border-b border-slate-700">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <!-- ردیف اول: لوگو و دکمه‌های ناوبری -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-2.5 border-b border-slate-800">
+                <div onclick="switchPortalView('home')" class="flex items-center gap-3 cursor-pointer group">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center text-2xl shadow-md group-hover:scale-105 transition">
+                        🚀
+                    </div>
+                    <div>
+                        <h1 class="font-black text-sm md:text-base text-amber-300 leading-tight flex items-center gap-2">
+                            <span>آکادمی برنامه‌نویسی و بازی‌سازی مهندس دیلمی</span>
+                            <span class="hidden sm:inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] px-2 py-0.5 rounded-full">آنلاین</span>
+                        </h1>
+                        <p class="text-[11px] md:text-xs text-slate-300">
+                            ویژه تیم ۴ نفره مهندسان پایه پنجم و ششم — از اسکرچ تا پایتون
+                        </p>
+                    </div>
+                </div>
+
+                <!-- دکمه‌های تغییر نما -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="navBtnHome" onclick="switchPortalView('home')" class="px-4 py-2 rounded-xl font-black text-xs md:text-sm transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-md cursor-pointer">
+                        <span>🏠</span>
+                        <span>صفحه اول (ویترین جزوه‌ها)</span>
+                    </button>
+                    <button id="navBtnBooklet" onclick="switchPortalView('booklet')" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer">
+                        <span>📖</span>
+                        <span>ورود به جزوه شماره ۱</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ردیف دوم: ورود نام دانش‌آموز -->
+            <div class="pt-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div class="flex flex-wrap items-center gap-2 flex-1">
+                    <label for="globalStudentName" class="font-bold text-indigo-200 flex items-center gap-1 shrink-0">
+                        <span>👤 نام مهندس برنامه‌نویس (دانش‌آموز):</span>
+                    </label>
+                    <input id="globalStudentName" type="text" placeholder="نام خودت را اینجا بنویس (مثلاً: امیرعلی، سارا...)" oninput="syncStudentName(this.value)" class="bg-slate-800 text-white placeholder-slate-400 border border-slate-600 focus:border-amber-400 focus:outline-none rounded-xl px-3 py-1.5 w-60 md:w-72 font-bold text-xs" />
+                    <div class="flex items-center gap-1 text-[11px] text-slate-300">
+                        <span class="hidden md:inline text-slate-400 ml-1">آواتار:</span>
+                        <button type="button" onclick="selectAvatar('🦸‍♂️')" class="avatar-btn bg-indigo-600 px-2 py-1 rounded-lg border border-amber-300 cursor-pointer">🦸‍♂️</button>
+                        <button type="button" onclick="selectAvatar('🦸‍♀️')" class="avatar-btn bg-slate-800 hover:bg-indigo-600 px-2 py-1 rounded-lg border border-transparent cursor-pointer">🦸‍♀️</button>
+                        <button type="button" onclick="selectAvatar('🧑‍💻')" class="avatar-btn bg-slate-800 hover:bg-indigo-600 px-2 py-1 rounded-lg border border-transparent cursor-pointer">🧑‍💻</button>
+                        <button type="button" onclick="selectAvatar('🧙‍♂️')" class="avatar-btn bg-slate-800 hover:bg-indigo-600 px-2 py-1 rounded-lg border border-transparent cursor-pointer">🧙‍♂️</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 bg-emerald-950/90 px-3 py-1 rounded-full text-[11px] text-emerald-300 border border-emerald-600/50">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>متصل به پنل دریافت تکالیف مهندس دیلمی</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+         بدنه اصلی پورتال (شامل ۲ نمای تمیز و سریع: ۱. صفحه اول  ۲. جزوه شماره ۱)
+         ===================================================================== -->
+    <main class="portal-container max-w-6xl w-full mx-auto px-4 py-6 flex-1">
+
+        <!-- =================================================================
+             VIEW 1: صفحه اول — ویترین جزوه‌های کلاس مهندس دیلمی
+             ================================================================= -->
+        <div id="portalViewHome" class="space-y-8">
+
+            <!-- بنر خوش‌آمدگویی صفحه اول -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-l from-indigo-900 via-purple-900 to-slate-900 text-white p-6 md:p-8 shadow-2xl border-2 border-indigo-400/30">
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-8 space-y-3">
+                        <div class="inline-flex items-center gap-2 bg-amber-400/20 border border-amber-300/40 text-amber-300 text-xs font-black px-3.5 py-1 rounded-full">
+                            <span>🌟 به پورتال رسمی کلاس برنامه‌نویسی خوش آمدید!</span>
+                        </div>
+                        <h2 class="text-2xl md:text-4xl font-black leading-snug text-white">
+                            🚀 آکادمی برنامه‌نویسی و بازی‌سازی <span class="text-amber-300">مهندس دیلمی</span>
+                        </h2>
+                        <p class="text-indigo-100 text-xs md:text-sm leading-relaxed max-w-2xl">
+                            بچه‌های عزیز، در این سایت می‌توانید جزوه هر جلسه را همراه با <b>بازی‌ها و شبیه‌سازهای زنده</b> مطالعه کنید، نسخه PDF یا Word آن را دانلود نمایید و در پایان جزوه، پاسخ چالش‌ها را مستقیماً برای <b>مهندس دیلمی</b> بفرستید!
+                        </p>
+                        <div class="pt-2 flex flex-wrap items-center gap-3 text-xs font-bold">
+                            <span class="bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
+                                <span>👨‍🏫 مدیر ارشد تیم (مدرس):</span>
+                                <b class="text-amber-300">مهندس دیلمی</b>
+                            </span>
+                            <span class="bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
+                                <span>👥 اعضای تیم:</span>
+                                <b class="text-emerald-300"> مهندسان جوان (پایه پنجم و ششم)</b>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- راهنمای ۴ قدمی دانش‌آموز -->
+                    <div class="lg:col-span-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-xs space-y-3">
+                        <div class="font-black text-amber-300 text-sm flex items-center gap-2 border-b border-white/15 pb-2">
+                            <span>🎯 چطور از این سایت استفاده کنیم؟</span>
+                        </div>
+                        <ol class="space-y-2 text-indigo-50 list-decimal list-inside font-medium">
+                            <li>ابتدا <b>نام خودت</b> را در کادر بالای صفحه بنویس.</li>
+                            <li>روی دکمه <b>«ورود به جزوه شماره ۱»</b> در کارت زیر کلیک کن.</li>
+                            <li>درس‌نامه را بخوان و با ۵ شبیه‌ساز داخل جزوه بازی کن.</li>
+                            <li>در بخش آخر جزوه، به ۶ چالش پاسخ بده و دکمه <b>«ارسال برای مهندس دیلمی»</b> را بزن!</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- عنوان ویترین جزوه‌ها -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl font-black shadow">
+                    📚
+                </div>
+                <div>
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">ویترین جزوه‌های کلاس</h3>
+                    <p class="text-xs text-slate-600 font-bold">روی جزوه فعال کلیک کن تا وارد درس‌نامه، آزمایشگاه‌ها و بخش ارسال تکلیف شوی:</p>
+                </div>
+            </div>
+
+            <!-- گرید کارت‌های جزوه (کارت ۱: جزوه جامع فعال | کارت ۲: پیش‌نمایش قفل‌شده برای جلسات آینده) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+                <!-- کارت ۱: جزوه شماره ۱ (فعال و کامل) -->
+                <div class="lg:col-span-8 booklet-hub-card bg-white rounded-3xl shadow-xl border-2 border-indigo-300 overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="bg-gradient-to-l from-indigo-700 via-purple-700 to-indigo-900 text-white p-6">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                <span class="bg-amber-400 text-slate-950 font-black text-sm md:text-base px-4 py-1.5 rounded-2xl shadow">
+                                    🚀 جزوه شماره ۱ — تاریخ: آبان ۱۴۰۵
+                                </span>
+                                <span class="bg-emerald-400/20 text-emerald-200 border border-emerald-300/40 font-black text-xs px-3.5 py-1.5 rounded-xl">
+                                    🟢 فعال و آماده مطالعه
+                                </span>
+                            </div>
+                            <h4 class="font-black text-xl md:text-2xl leading-snug mb-1.5">
+                                دفترچه ماجراجویی برنامه‌نویس‌ها: از اسکرچ تا پایتون!
+                            </h4>
+                            <p class="text-indigo-100 text-xs md:text-sm">
+                                شامل هر ۷ بخش درس‌نامه مصور + ۵ شبیه‌ساز و بازی زنده + ۶ چالش و تمرین خانه
+                            </p>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="text-xs md:text-sm font-black text-indigo-950 mb-3">📋 سرفصل‌های کامل این جزوه:</div>
+                            <ul class="space-y-2.5 mb-5 text-xs md:text-sm text-slate-700">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-600 font-black">✔</span>
+                                    <span><b>بخش ۱ و ۲:</b> نقشه مخفی صفحه بازی (محور مختصات افقی و عمودی) + پروژه بازی موزخوری و فرار از دشمن در اسکرچ</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-600 font-black">✔</span>
+                                    <span><b>بخش ۳ و ۴:</b> اشکال فلوچارت (بیضی، مستطیل، لوزی) + شبیه‌ساز گام‌به‌گام مبارزه با غول و متغیرها</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-600 font-black">✔</span>
+                                    <span><b>بخش ۵:</b> الگوریتم جستجوی دودویی (موشک در برابر حلزون) + ماشین ۴ بیتی تیم ۴ نفره ما</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-600 font-black">✔</span>
+                                    <span><b>بخش ۶ و ۷:</b> جدول ترجمه اسکرچ فارسی به پایتون، لاک‌پشت نقاش، قلعه باگ‌ها + ۶ چالش و ارسال مستقیم تکلیف</span>
+                                </li>
+                            </ul>
+
+                            <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+                                <span class="text-xs font-bold px-3 py-1 rounded-xl bg-indigo-50 text-indigo-900 border border-indigo-200">🎮 ۵ شبیه‌ساز تعاملی</span>
+                                <span class="text-xs font-bold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200">🖨️ قابل چاپ و دانلود PDF/Word</span>
+                                <span class="text-xs font-bold px-3 py-1 rounded-xl bg-rose-50 text-rose-900 border border-rose-200">🏆 ۶ چالش با تصحیح خودکار</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 pt-0">
+                        <button type="button" onclick="switchPortalView('booklet')" class="w-full py-4 px-6 rounded-2xl font-black text-sm md:text-base shadow-lg transition flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-l from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 text-white">
+                            <span>📖</span>
+                            <span>ورود به جزوه شماره ۱ (شروع یادگیری و تمرین‌ها) ⬅</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- کارت ۲: جزوه شماره ۲ (قفل / به‌زودی در جلسات آینده) -->
+                <div class="lg:col-span-4 bg-slate-200/75 rounded-3xl shadow-md border-2 border-dashed border-slate-300 overflow-hidden flex flex-col justify-between opacity-90">
+                    <div>
+                        <div class="bg-slate-800 text-white p-6">
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="bg-slate-700 text-slate-200 font-black text-xs px-3 py-1.5 rounded-xl border border-slate-600">
+                                    🔒 جزوه شماره ۲ — تاریخ: به‌زودی در جلسات آینده
+                                </span>
+                            </div>
+                            <h4 class="font-black text-lg text-slate-100 leading-snug mb-1.5">
+                                مسابقه ۴ لاک‌پشت در پایتون و ساخت بازی قلعه باگ‌ها
+                            </h4>
+                            <p class="text-slate-400 text-xs">
+                                مخصوص جلسات بعدی کلاس پس از تکمیل چالش‌های جزوه شماره ۱
+                            </p>
+                        </div>
+
+                        <div class="p-6 space-y-3 text-xs text-slate-600">
+                            <div class="font-black text-slate-800">🔜 سرفصل‌های جلسه آینده:</div>
+                            <ul class="space-y-2">
+                                <li class="flex items-start gap-2">
+                                    <span>🔒</span>
+                                    <span>کدنویسی کامل مسابقه ۴ لاک‌پشت رنگی در محیط پایتون</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span>🔒</span>
+                                    <span>کشیدن ستاره و اشکال رنگی پیشرفته با حلقه تکرار</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span>🔒</span>
+                                    <span>تبدیل بازی رومیزی «فرار از قلعه باگ‌ها» به کد واقعی پایتون</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="p-6 pt-0">
+                        <div class="w-full py-3.5 px-4 rounded-2xl bg-slate-300 text-slate-700 font-black text-xs text-center border border-slate-400/50">
+                            🔒 این جزوه در جلسات آینده توسط مهندس دیلمی باز می‌شود
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =================================================================
+             VIEW 2: نمای کامل جزوه شماره ۱ (تمام ۷ بخش + ۵ شبیه‌ساز + ارسال تکالیف)
+             ================================================================= -->
+        <div id="portalViewBooklet" class="hidden space-y-6">
+
+            <!-- نوار ابزار بالای جزوه شماره ۱ -->
+            <div class="no-print bg-white border-2 border-indigo-200 rounded-2xl p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="switchPortalView('home')" class="bg-slate-900 hover:bg-slate-800 text-white font-black px-4 py-2 rounded-xl text-xs md:text-sm flex items-center gap-2 shadow cursor-pointer transition">
+                        <span>🏠</span>
+                        <span>بازگشت به صفحه اول (ویترین جزوه‌ها)</span>
+                    </button>
+                    <span class="hidden sm:inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 font-black px-3 py-1.5 rounded-xl text-xs">
+                        جزوه شماره ۱ — تاریخ: آبان ۱۴۰۵
+                    </span>
+                </div>
+
+                <!-- دکمه‌های چاپ PDF، دانلود Word و پرش به چالش‌ها -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="scrollToHomeworkSection()" class="bg-rose-600 hover:bg-rose-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                        <span>🏆</span>
+                        <span>رفتن به بخش چالش‌ها و ارسال تکلیف</span>
+                    </button>
+                    <button type="button" onclick="triggerPrintBooklet()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                        <span>🖨️</span>
+                        <span>چاپ / ذخیره PDF (قالب A4)</span>
+                    </button>
+                    <button type="button" onclick="exportBookletToWord()" class="bg-blue-600 hover:bg-blue-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                        <span>📄</span>
+                        <span>دانلود فایل Word (.doc)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ناحیه قابل چاپ جزوه شماره ۱ -->
+            <div id="printableBookletArea" class="space-y-8">
+
+                <!-- سربرگ رسمی جزوه شماره ۱ -->
+                <div class="section-card bg-gradient-to-l from-indigo-700 via-purple-700 to-fuchsia-700 text-white p-6 rounded-3xl shadow-lg border-4 border-white">
+                    <div class="flex flex-col md:flex-row justify-between items-stretch gap-5">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <div class="flex flex-wrap items-center gap-2 mb-2.5">
+                                <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow">
+                                    جزوه شماره ۱
+                                </span>
+                                <span class="bg-white/20 text-amber-200 text-xs font-bold px-3.5 py-1 rounded-full">
+                                    📅 تاریخ: آبان ۱۴۰۵
+                                </span>
+                            </div>
+                            <h2 class="text-xl md:text-3xl font-black mb-2 leading-snug">
+                                🚀 دفترچه ماجراجویی برنامه‌نویس‌ها: از اسکرچ تا پایتون!
+                            </h2>
+                            <p class="text-indigo-100 text-xs md:text-sm font-medium">
+                                آموزش تعاملی محور مختصات، پروژه بازی موزخوری اسکرچ، فلوچارت مبارزه با غول، اعداد باینری و لاک‌پشت نقاش پایتون
+                            </p>
+                        </div>
+
+                        <!-- کادر مشخصات دانش‌آموز و مهندس دیلمی -->
+                        <div class="bg-white text-slate-800 p-4 rounded-2xl w-full md:w-80 shadow-inner flex flex-col justify-between text-xs md:text-sm border-2 border-indigo-200">
+                            <div class="mb-2.5 flex items-center justify-between border-b border-slate-200 pb-2 gap-2">
+                                <span class="font-black text-indigo-900 shrink-0">👤 مهندس برنامه‌نویس:</span>
+                                <input id="headerStudentNameInput" type="text" placeholder="نام خودت را بنویس..." oninput="syncStudentName(this.value)" class="w-full text-left font-black text-rose-600 bg-transparent border-b border-dashed border-slate-300 focus:outline-none text-xs" />
+                            </div>
+                            <div class="mb-2.5 bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-2 flex items-center justify-between">
+                                <span class="font-bold text-slate-700">👨‍🏫 مدیر ارشد تیم (مدرس):</span>
+                                <span class="font-black text-indigo-700 text-sm">مهندس دیلمی</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs font-bold text-slate-600 pt-1">
+                                <span>🏆 سطح: ۱ (توسعه‌دهنده بازی)</span>
+                                <span>👥 تیم: ۱ نفره</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================
+                     بخش اول: نقشه مخفی صفحه بازی (محور مختصات افقی و عمودی)
+                     ============================================================= -->
+                <section class="section-card bg-white rounded-3xl p-6 shadow-md border-2 border-indigo-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-indigo-600 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow">۱</span>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-indigo-950">بخش اول: نقشه مخفی صفحه بازی (محور مختصات افقی و عمودی)</h3>
+                            <p class="text-xs text-slate-500 font-bold">چطور کامپیوتر جای دقیق کاراکترها را با اعداد مثبت و منفی پیدا می‌کند؟</p>
+                        </div>
+                    </div>
+
+                    <p class="text-slate-700 text-sm mb-4">
+                        صفحه مانیتور برای کامپیوتر مثل یک زمین شطرنج خط‌کشی‌شده است. کاراکتر بازی در شروع کار، دقیقاً وسط صفحه یعنی در نقطه <code dir="ltr" class="ltr-code">(0, 0)</code> می‌ایستد. برای حرکت دادن او از دو محور استفاده می‌کنیم:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                        <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4">
+                            <h4 class="font-black text-emerald-900 text-sm md:text-base mb-1.5">↔️ محور افقی <code dir="ltr" class="ltr-code">X</code> (حرکت به چپ و راست)</h4>
+                            <ul class="text-xs md:text-sm space-y-1.5 text-slate-700 list-disc list-inside">
+                                <li>اگر به سمت <b>راست</b> برویم، اعداد <b class="text-emerald-700">مثبت (+)</b> می‌شوند (مثل قدم زدن رو به جلو).</li>
+                                <li>اگر به سمت <b>چپ</b> برگردیم، اعداد <b class="text-rose-600">منفی (-)</b> می‌شوند (مثل عقب‌گرد رفتن).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4">
+                            <h4 class="font-black text-blue-900 text-sm md:text-base mb-1.5">↕️ محور عمودی <code dir="ltr" class="ltr-code">Y</code> (قانون آسانسور ساختمان)</h4>
+                            <ul class="text-xs md:text-sm space-y-1.5 text-slate-700 list-disc list-inside">
+                                <li>طبقه همکف عدد <b>صفر</b> است و رفتن به طبقات <b>بالا</b> عدد <b class="text-emerald-700">مثبت (+)</b> می‌گیرد.</li>
+                                <li>رفتن به سمت <b>پایین</b> (پارکینگ زیرزمین با دکمه‌های <code dir="ltr" class="ltr-code">-1</code> و <code dir="ltr" class="ltr-code">-2</code>) عدد <b class="text-rose-600">منفی (-)</b> می‌گیرد!</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- شبیه‌ساز ۱: آزمایشگاه زنده محور مختصات -->
+                    <div class="bg-slate-50 border-2 border-indigo-200 rounded-3xl p-5 mb-5">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-200">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🕹️</span>
+                                <span class="font-black text-indigo-950 text-sm md:text-base">آزمایشگاه زنده محور مختصات: دکمه‌ها را بزن و حرکت گربه را ببین!</span>
+                            </div>
+                            <button type="button" onclick="resetCoordCat()" class="no-print bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer">
+                                🎯 بازگشت به مرکز ۰ و ۰
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+                            <div class="lg:col-span-7">
+                                <div class="text-center mb-2">
+                                    <span class="bg-emerald-600 text-white text-xs font-bold px-3.5 py-1 rounded-full inline-block">
+                                        ⬆️ بالا: محور عمودی مثبت — طبقات بالای آسانسور
+                                    </span>
+                                </div>
+
+                                <div id="coordBoard" class="relative w-full h-72 bg-white border-2 border-slate-700 rounded-2xl overflow-hidden shadow-inner grid grid-cols-2 grid-rows-2">
+                                    <!-- ناحیه اول (راست و بالا) -->
+                                    <div class="bg-emerald-50/80 border-b-2 border-l-2 border-slate-800 p-2.5 flex flex-col justify-between text-right">
+                                        <div class="font-black text-emerald-900 text-xs">ناحیه اول: راست و بالا</div>
+                                        <div class="text-[11px] font-bold text-emerald-700">افقی مثبت و عمودی مثبت</div>
+                                    </div>
+                                    <!-- ناحیه دوم (چپ و بالا) -->
+                                    <div class="bg-blue-50/80 border-b-2 border-slate-800 p-2.5 flex flex-col justify-between text-left">
+                                        <div class="font-black text-blue-900 text-xs">ناحیه دوم: چپ و بالا</div>
+                                        <div class="text-[11px] font-bold text-blue-700">افقی منفی و عمودی مثبت</div>
+                                    </div>
+                                    <!-- ناحیه چهارم (راست و پایین) -->
+                                    <div class="bg-amber-50/80 border-l-2 border-slate-800 p-2.5 flex flex-col justify-end text-right">
+                                        <div class="font-black text-amber-900 text-xs">ناحیه چهارم: راست و پایین</div>
+                                        <div class="text-[11px] font-bold text-amber-800">افقی مثبت و عمودی منفی</div>
+                                    </div>
+                                    <!-- ناحیه سوم (چپ و پایین) -->
+                                    <div class="bg-rose-50/80 p-2.5 flex flex-col justify-end text-left">
+                                        <div class="font-black text-rose-900 text-xs">ناحیه سوم: چپ و پایین</div>
+                                        <div class="text-[11px] font-bold text-rose-800">افقی منفی و عمودی منفی</div>
+                                    </div>
+
+                                    <div class="absolute right-2 top-1/2 -translate-y-1/2 bg-teal-700 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                        راست: افقی مثبت
+                                    </div>
+                                    <div class="absolute left-2 top-1/2 -translate-y-1/2 bg-rose-700 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                        چپ: افقی منفی
+                                    </div>
+                                    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-slate-900"></div>
+
+                                    <!-- گربه متحرک -->
+                                    <div id="coordCatSprite" style="left: 50%; top: 50%;" class="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-200 z-20 flex flex-col items-center pointer-events-none">
+                                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 border-2 border-white shadow-lg flex items-center justify-center text-2xl">
+                                            🐱
+                                        </div>
+                                        <span id="coordCatBubble" dir="ltr" class="bg-slate-900 text-amber-300 font-mono font-bold text-[10px] px-2 py-0.5 rounded-full mt-0.5 shadow">
+                                            (0, 0)
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-2">
+                                    <span class="bg-rose-600 text-white text-xs font-bold px-3.5 py-1 rounded-full inline-block">
+                                        ⬇️ پایین: محور عمودی منفی — پارکینگ زیرزمین آسانسور
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- کنترل‌ها -->
+                            <div class="lg:col-span-5 flex flex-col gap-3">
+                                <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 text-center shadow-sm">
+                                    <div class="text-xs font-bold text-slate-500 mb-2">دکمه‌های حرکت گربه (هر کلیک = ۱۰ گام):</div>
+                                    <div class="flex flex-col items-center gap-2">
+                                        <button type="button" onclick="moveCoordCat(0, 10)" class="sb-motion cursor-pointer hover:scale-105 transition">
+                                            ⬆️ بالا: ۱۰+ عمودی
+                                        </button>
+                                        <div class="flex items-center justify-center gap-2 flex-wrap">
+                                            <button type="button" onclick="moveCoordCat(10, 0)" class="sb-motion cursor-pointer hover:scale-105 transition">
+                                                ➡️ راست: ۱۰+ افقی
+                                            </button>
+                                            <button type="button" onclick="moveCoordCat(-10, 0)" class="sb-motion cursor-pointer hover:scale-105 transition">
+                                                ⬅️ چپ: ۱۰- افقی
+                                            </button>
+                                        </div>
+                                        <button type="button" onclick="moveCoordCat(0, -10)" class="sb-motion cursor-pointer hover:scale-105 transition">
+                                            ⬇️ پایین: ۱۰- عمودی
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2.5 text-center">
+                                    <div class="bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-3">
+                                        <div class="text-xs font-bold text-emerald-900">محور افقی <code dir="ltr" class="ltr-code">X</code></div>
+                                        <div id="coordXVal" dir="ltr" class="text-2xl font-black font-mono text-emerald-950 mt-1">0</div>
+                                    </div>
+                                    <div class="bg-blue-100 border-2 border-blue-300 rounded-2xl p-3">
+                                        <div class="text-xs font-bold text-blue-900">محور عمودی <code dir="ltr" class="ltr-code">Y</code></div>
+                                        <div id="coordYVal" dir="ltr" class="text-2xl font-black font-mono text-blue-950 mt-1">0</div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-indigo-950 text-white rounded-2xl p-3 text-center">
+                                    <div class="text-[11px] text-indigo-200">موقعیت فعلی گربه در نقشه:</div>
+                                    <div id="coordQuadrantText" class="font-black text-amber-300 text-sm mt-0.5">
+                                        🎯 مرکز صفحه (نقطه شروع صفر و صفر)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- جدول دستورات فارسی حرکت در اسکرچ -->
+                    <div class="overflow-x-auto">
+                        <table class="booklet-table text-xs md:text-sm bg-white rounded-xl overflow-hidden">
+                            <thead class="bg-indigo-600 text-white">
+                                <tr>
+                                    <th class="text-right">جهت حرکت کاراکتر</th>
+                                    <th class="text-center">محور مربوطه</th>
+                                    <th class="text-center">علامت عدد</th>
+                                    <th class="text-center">دستور فارسی در اسکرچ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold">حرکت به سمت راست ➡️</td>
+                                    <td class="text-center">محور افقی <code dir="ltr" class="ltr-code">X</code></td>
+                                    <td class="text-center font-bold text-emerald-700">مثبت (+)</td>
+                                    <td class="text-center"><span class="sb-motion">تغییر محور افقی به اندازه ۱۰ واحد مثبت</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">حرکت به سمت چپ ⬅️</td>
+                                    <td class="text-center">محور افقی <code dir="ltr" class="ltr-code">X</code></td>
+                                    <td class="text-center font-bold text-rose-600">منفی (-)</td>
+                                    <td class="text-center"><span class="sb-motion">تغییر محور افقی به اندازه ۱۰ واحد منفی</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">حرکت به سمت بالا ⬆️</td>
+                                    <td class="text-center">محور عمودی <code dir="ltr" class="ltr-code">Y</code></td>
+                                    <td class="text-center font-bold text-emerald-700">مثبت (+)</td>
+                                    <td class="text-center"><span class="sb-motion">تغییر محور عمودی به اندازه ۱۰ واحد مثبت</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">حرکت به سمت پایین ⬇️</td>
+                                    <td class="text-center">محور عمودی <code dir="ltr" class="ltr-code">Y</code></td>
+                                    <td class="text-center font-bold text-rose-600">منفی (-)</td>
+                                    <td class="text-center"><span class="sb-motion">تغییر محور عمودی به اندازه ۱۰ واحد منفی</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- =============================================================
+                     بخش دوم: پروژه بازی ما در اسکرچ (موزخوری و فرار از دشمن تعقیب‌کننده)
+                     ============================================================= -->
+                <section class="section-card bg-amber-50/90 rounded-3xl p-6 shadow-md border-2 border-amber-300">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-amber-500 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow">۲</span>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-amber-950">بخش دوم: پروژه بازی ما در اسکرچ (موزخوری و فرار از دشمن تعقیب‌کننده) 🐱🍌👾</h3>
+                            <p class="text-xs text-amber-800 font-bold">مرور کامل ۳ قانون اصلی بازی که با هم در کلاس ساختیم + شبیه‌ساز قابل بازی!</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white border-2 border-blue-300 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="bg-blue-600 text-white text-xs font-black px-3 py-1.5 rounded-xl mb-3 inline-block">
+                                    ۱. قانون حرکت چهارجهته با کلیدهای جهت‌نما
+                                </div>
+                                <p class="text-xs text-slate-700 mb-2">
+                                    وقتی <span class="sb-control">وقتی پرچم سبز کلیک شد</span> اجرا می‌شود، داخل حلقه <span class="sb-control">برای همیشه تکرار کن</span> چهار کلید را بررسی می‌کنیم:
+                                </p>
+                            </div>
+                            <div class="space-y-1.5 text-xs bg-blue-50 p-2.5 rounded-xl border border-blue-200">
+                                <div>🔼 کلید بالا: <span class="sb-motion">تغییر محور عمودی به اندازه ۱۰ واحد مثبت</span></div>
+                                <div>🔽 کلید پایین: <span class="sb-motion">تغییر محور عمودی به اندازه ۱۰ واحد منفی</span></div>
+                                <div>▶️ کلید راست: <span class="sb-motion">تغییر محور افقی به اندازه ۱۰ واحد مثبت</span></div>
+                                <div>◀️ کلید چپ: <span class="sb-motion">تغییر محور افقی به اندازه ۱۰ واحد منفی</span></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border-2 border-yellow-400 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="bg-amber-500 text-white text-xs font-black px-3 py-1.5 rounded-xl mb-3 inline-block">
+                                    ۲. قانون خوردن موز طلایی و متغیر امتیاز
+                                </div>
+                                <p class="text-xs text-slate-700 mb-2">
+                                    وقتی گربه به موز می‌رسد، چطور امتیازش بالا می‌رود و موز به نقطه جدیدی می‌پرد؟
+                                </p>
+                            </div>
+                            <div class="space-y-1.5 text-xs bg-yellow-50 p-2.5 rounded-xl border border-yellow-300">
+                                <div>🔶 <span class="sb-control">اگر گربه با موز برخورد کرد</span> آنگاه:</div>
+                                <div>📦 گام اول: <span class="sb-variable">تغییر متغیر امتیاز به اندازه ۱ واحد</span></div>
+                                <div>🎲 گام دوم: <span class="sb-motion">برو به مکان تصادفی</span></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border-2 border-rose-300 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="bg-rose-600 text-white text-xs font-black px-3 py-1.5 rounded-xl mb-3 inline-block">
+                                    ۳. هوش مصنوعی دشمن و پایان بازی
+                                </div>
+                                <p class="text-xs text-slate-700 mb-2">
+                                    دشمن چطور همیشه دنبال گربه ما می‌دود و با برخوردش بازی تمام می‌شود؟
+                                </p>
+                            </div>
+                            <div class="space-y-1.5 text-xs bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+                                <div>🔄 داخل حلقه <span class="sb-control">برای همیشه تکرار کن</span>:</div>
+                                <div>🧭 <span class="sb-motion">به سمت گربه بچرخ</span> و <span class="sb-motion">۳ گام حرکت کن</span></div>
+                                <div>🛑 شرط باخت: در صورت برخورد با گربه ⬅️ <span class="sb-control">توقف همه</span>!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- شبیه‌ساز ۲: مینی‌گیم زنده موزخوری اسکرچ -->
+                    <div class="no-print bg-white border-2 border-amber-400 rounded-3xl p-4 shadow-inner">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2 border-b border-amber-200">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🎮</span>
+                                <span class="font-black text-amber-950 text-sm md:text-base">شبیه‌ساز زنده بازی موزخوری اسکرچ: همین الان بازی کن!</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-orange-500 text-white font-black px-3.5 py-1 rounded-xl text-xs shadow">
+                                    🏆 متغیر امتیاز: <span id="bananaGameScore">0</span>
+                                </span>
+                                <button id="bananaStartBtn" type="button" onclick="toggleBananaMiniGame()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-1.5 rounded-xl text-xs shadow cursor-pointer">
+                                    🚩 شروع بازی (پرچم سبز)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                            <div class="lg:col-span-8">
+                                <div id="bananaArena" class="relative w-full h-60 bg-gradient-to-br from-amber-50 via-white to-blue-50 border-2 border-amber-300 rounded-2xl overflow-hidden shadow-inner">
+                                    <div id="miniCat" style="left: 50%; top: 50%;" class="absolute -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-orange-500 border-2 border-white shadow-md flex items-center justify-center text-2xl transition-all duration-75">
+                                        🐱
+                                    </div>
+                                    <div id="miniBanana" style="left: 78%; top: 28%;" class="absolute -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-yellow-300 border-2 border-amber-500 shadow flex items-center justify-center text-xl animate-bounce">
+                                        🍌
+                                    </div>
+                                    <div id="miniEnemy" style="left: 15%; top: 20%;" class="absolute -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-rose-600 border-2 border-white shadow-md flex items-center justify-center text-2xl">
+                                        👾
+                                    </div>
+                                    <div id="bananaOverlay" class="absolute inset-0 bg-slate-900/65 backdrop-blur-xs flex flex-col items-center justify-center text-white p-4 text-center">
+                                        <div id="bananaOverlayText" class="font-black text-base md:text-lg text-amber-300 mb-2">
+                                            برای شروع، روی دکمه «🚩 شروع بازی (پرچم سبز)» کلیک کن!
+                                        </div>
+                                        <p class="text-xs text-slate-200">با کلیدهای جهت‌نمای کیبورد یا دکمه‌های سمت چپ، موزها را بخور و از دشمن فرار کن!</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-4 flex flex-col items-center justify-center bg-amber-50/70 rounded-2xl p-3 border border-amber-200">
+                                <span class="text-xs font-bold text-amber-900 mb-2">کنترل گربه (یا با کلیدهای جهت‌نما):</span>
+                                <button type="button" onclick="nudgeMiniCat(0, -14)" class="bg-blue-600 hover:bg-blue-500 text-white font-bold w-24 py-2 rounded-xl text-xs mb-1.5 shadow cursor-pointer">⬆️ بالا</button>
+                                <div class="flex gap-2 mb-1.5">
+                                    <button type="button" onclick="nudgeMiniCat(14, 0)" class="bg-blue-600 hover:bg-blue-500 text-white font-bold w-24 py-2 rounded-xl text-xs shadow cursor-pointer">➡️ راست</button>
+                                    <button type="button" onclick="nudgeMiniCat(-14, 0)" class="bg-blue-600 hover:bg-blue-500 text-white font-bold w-24 py-2 rounded-xl text-xs shadow cursor-pointer">⬅️ چپ</button>
+                                </div>
+                                <button type="button" onclick="nudgeMiniCat(0, 14)" class="bg-blue-600 hover:bg-blue-500 text-white font-bold w-24 py-2 rounded-xl text-xs shadow cursor-pointer">⬇️ پایین</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =============================================================
+                     بخش سوم: نقشه گنج برنامه‌نویس‌ها (الگوریتم و فلوچارت)
+                     ============================================================= -->
+                <section class="section-card bg-white rounded-3xl p-6 shadow-md border-2 border-teal-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-teal-600 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow">۳</span>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-teal-950">بخش سوم: نقشه گنج برنامه‌نویس‌ها (الگوریتم و فلوچارت)</h3>
+                            <p class="text-xs text-teal-700 font-bold">آشنایی با ۳ شکل هندسی استاندارد برای کشیدن نقشه بازی قبل از کدنویسی</p>
+                        </div>
+                    </div>
+
+                    <p class="text-xs md:text-sm text-slate-700 mb-5">
+                        کامپیوترها سرعت فوق‌العاده‌ای دارند اما خودشان قدرت فکر کردن ندارند! اگر به آن‌ها دستور دقیق ندهیم، برنامه دچار خطا یا <b>باگ</b> می‌شود. به همین خاطر برنامه‌نویس‌ها قبل از کدنویسی، نقشه راه برنامه را با ۳ شکل زیر می‌کشند که به آن <b>فلوچارت</b> می‌گویند:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- شکل اول: بیضی -->
+                        <div class="bg-emerald-50/70 border-2 border-emerald-400 rounded-2xl p-4 text-center flex flex-col justify-between">
+                            <div class="mx-auto my-2 w-48 py-3 bg-emerald-200 border-2 border-emerald-600 rounded-full font-black text-emerald-950 text-sm shadow-xs">
+                                ⭕ شروع / پایان برنامه
+                            </div>
+                            <div>
+                                <h4 class="font-black text-emerald-900 text-base mt-2 mb-1">شکل اول: بیضی — شروع و پایان</h4>
+                                <p class="text-xs text-slate-700">
+                                    نشان‌دهنده نقطه شروع بازی با زدن پرچم سبز در اسکرچ و نقطه پایان برنامه است.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- شکل دوم: مستطیل -->
+                        <div class="bg-blue-50/70 border-2 border-blue-400 rounded-2xl p-4 text-center flex flex-col justify-between">
+                            <div class="mx-auto my-2 w-48 py-3 bg-blue-200 border-2 border-blue-600 rounded-xl font-black text-blue-950 text-sm shadow-xs">
+                                ▭ انجام کار / دستور
+                            </div>
+                            <div>
+                                <h4 class="font-black text-blue-900 text-base mt-2 mb-1">شکل دوم: مستطیل — انجام کار و دستور</h4>
+                                <p class="text-xs text-slate-700">
+                                    برای اجرای یک حرکت یا تغییر مقدار متغیرها استفاده می‌شود؛ مثلاً: «۵۰ واحد از جان غول کم کن».
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- شکل سوم: لوزی -->
+                        <div class="bg-amber-50/70 border-2 border-amber-400 rounded-2xl p-4 text-center flex flex-col justify-between">
+                            <div class="mx-auto my-1 w-full flex justify-center">
+                                <svg viewBox="0 0 220 90" class="w-52 h-20">
+                                    <polygon points="110,6 212,45 110,84 8,45" fill="#fde68a" stroke="#d97706" stroke-width="3.5" />
+                                    <text x="110" y="49" text-anchor="middle" fill="#78350f" font-family="Vazirmatn, Tahoma" font-weight="900" font-size="13">
+                                        🔶 شرط / سوال؟
+                                    </text>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-amber-900 text-base mt-1 mb-1">شکل سوم: لوزی — نگهبان شرط</h4>
+                                <p class="text-xs text-slate-700">
+                                    سوالی می‌پرسد که دو مسیر دارد: مسیر <b>بله</b> یا مسیر <b>خیر</b>؛ مثلاً: «آیا جان غول صفر شده است؟»
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =============================================================
+                     بخش چهارم: شبیه‌ساز گام‌به‌گام فلوچارت و متغیرها (بازی مبارزه با غول)
+                     ============================================================= -->
+                <section class="section-card bg-white rounded-3xl p-6 shadow-md border-2 border-purple-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-purple-600 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow">۴</span>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-purple-950">بخش چهارم: شبیه‌ساز گام‌به‌گام فلوچارت و متغیرها (بازی مبارزه با غول) 🐉⚔️</h3>
+                            <p class="text-xs text-purple-700 font-bold">متغیر مثل یک جعبه برچسب‌دار است و شرط مثل نگهبانی است که داخل جعبه را چک می‌کند!</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-50/80 border-2 border-purple-300 rounded-3xl p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-purple-200">
+                            <div>
+                                <h4 class="font-black text-purple-950 text-base">⚔️ شبیه‌ساز زنده فلوچارت مبارزه با غول</h4>
+                                <p class="text-xs text-slate-600">روی دکمه «➡️ قدم بعدی» کلیک کن تا ببینی کامپیوتر چطور در هر مرحله جعبه متغیر <code dir="ltr" class="ltr-code">bossHP</code> را بررسی می‌کند:</p>
+                            </div>
+                            <div class="no-print flex flex-wrap items-center gap-2">
+                                <button type="button" onclick="resetBossFlow()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-2 rounded-xl text-xs cursor-pointer">
+                                    ⏮️ شروع از اول
+                                </button>
+                                <button type="button" onclick="stepBossFlow(1)" class="bg-purple-600 hover:bg-purple-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow cursor-pointer">
+                                    ➡️ قدم بعدی
+                                </button>
+                                <button type="button" onclick="hackBossHP()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs shadow cursor-pointer">
+                                    ⚡ ترفند هکرها: گذاشتن جان غول روی ۱
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+                            <div class="bg-white border-2 border-purple-200 rounded-2xl p-3 text-center">
+                                <div class="text-xs font-bold text-purple-800">گام فعال در فلوچارت:</div>
+                                <div id="bossSimStepName" class="font-black text-purple-950 text-sm mt-1">۱. بیضی شروع بازی (پرچم سبز)</div>
+                            </div>
+                            <div class="bg-white border-2 border-amber-300 rounded-2xl p-3">
+                                <div class="flex justify-between text-xs font-black text-amber-900 mb-1">
+                                    <span>📦 جعبه متغیر جان غول (<code dir="ltr" class="ltr-code">bossHP</code>):</span>
+                                    <span id="bossSimHPText" dir="ltr" class="font-mono text-base">100 / 100</span>
+                                </div>
+                                <div class="w-full h-4 bg-slate-200 rounded-full overflow-hidden">
+                                    <div id="bossSimHPBar" style="width: 100%;" class="h-full bg-gradient-to-r from-rose-500 to-amber-500 transition-all duration-300"></div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900 text-white rounded-2xl p-3 flex flex-col justify-center">
+                                <div class="text-[11px] text-slate-400">کد پایتون در حال اجرا:</div>
+                                <div class="mt-1 text-center">
+                                    <code id="bossSimPython" dir="ltr" class="ltr-code !bg-slate-800 !text-emerald-400 !border-slate-700"># Start Boss Fight</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch mb-5">
+                            <!-- نمودار فلوچارت -->
+                            <div class="lg:col-span-6 bg-white border-2 border-purple-200 rounded-2xl p-4 flex flex-col items-center justify-between">
+                                <div id="bfNode0" class="w-full max-w-sm bg-emerald-100 border-2 border-emerald-600 rounded-full py-2.5 px-4 text-center font-black text-emerald-950 text-xs transition-all">
+                                    ۱. بیضی شروع بازی (کلیک روی پرچم سبز)
+                                </div>
+                                <div class="text-slate-400 font-black text-sm my-0.5">⬇️</div>
+
+                                <div id="bfNode1" class="w-full max-w-sm bg-blue-100 border-2 border-blue-600 rounded-xl py-2.5 px-4 text-center text-xs transition-all">
+                                    <div class="font-black text-blue-950">۲. مستطیل ساخت متغیر جان غول</div>
+                                    <div class="mt-1"><span class="sb-variable">قرار دادن جان غول برابر ۱۰۰</span> <code dir="ltr" class="ltr-code">bossHP = 100</code></div>
+                                </div>
+                                <div class="text-slate-400 font-black text-sm my-0.5">⬇️</div>
+
+                                <div id="bfNode2" class="w-full max-w-sm bg-purple-100 border-2 border-purple-600 rounded-xl py-2.5 px-4 text-center text-xs transition-all">
+                                    <div class="font-black text-purple-950">۳. مستطیل ضربه شمشیر و کم شدن ۵۰ واحد</div>
+                                    <div class="mt-1"><span class="sb-variable">جان غول را ۵۰ واحد کاهش بده</span> <code dir="ltr" class="ltr-code">bossHP = bossHP - 50</code></div>
+                                </div>
+                                <div class="text-slate-400 font-black text-sm my-0.5">⬇️</div>
+
+                                <div id="bfNode3" class="w-full max-w-sm bg-amber-100 border-2 border-amber-500 rounded-2xl py-3 px-4 text-center text-xs transition-all">
+                                    <div class="font-black text-amber-950">🔶 ۴. لوزی شرط: آیا جان غول صفر شده است؟</div>
+                                    <div class="mt-1"><code dir="ltr" class="ltr-code">if bossHP &lt;= 0:</code></div>
+                                </div>
+
+                                <div class="w-full max-w-sm grid grid-cols-2 gap-2.5 my-2">
+                                    <div id="bfNode4" class="bg-rose-50 border-2 border-rose-400 rounded-xl p-2.5 text-center text-xs transition-all">
+                                        <div class="font-black text-rose-800">❌ مسیر خیر:</div>
+                                        <div class="text-[11px] text-rose-900 font-bold mt-0.5">غول هنوز زنده است! برگشت به حمله ⤴️</div>
+                                    </div>
+                                    <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-2.5 text-center text-xs flex flex-col justify-center">
+                                        <div class="font-black text-emerald-800">✅ مسیر بله:</div>
+                                        <div class="text-[11px] text-emerald-900 font-bold mt-0.5">جان غول صفر شد! برو به پایان بازی ⬇️</div>
+                                    </div>
+                                </div>
+
+                                <div id="bfNode5" class="w-full max-w-sm bg-emerald-200 border-2 border-emerald-700 rounded-full py-2.5 px-4 text-center font-black text-emerald-950 text-xs transition-all">
+                                    ۶. بیضی پایان: پیروزی و پایان بازی 🎉
+                                </div>
+                            </div>
+
+                            <!-- توضیح ۳ مرحله -->
+                            <div class="lg:col-span-6 flex flex-col justify-between gap-3">
+                                <div class="bg-white border-2 border-blue-200 rounded-2xl p-4">
+                                    <h5 class="font-black text-blue-900 text-sm mb-1">📦 مرحله اول: ساختن جعبه متغیر</h5>
+                                    <p class="text-xs text-slate-700">
+                                        کامپیوتر یک کارتن خالی می‌آورد، برچسب <code dir="ltr" class="ltr-code">bossHP</code> را رویش می‌چسباند و عدد <code dir="ltr" class="ltr-code">100</code> را داخل آن می‌گذارد.
+                                    </p>
+                                </div>
+                                <div class="bg-white border-2 border-orange-200 rounded-2xl p-4">
+                                    <h5 class="font-black text-orange-900 text-sm mb-1">⚔️ مرحله دوم: ضربه اول در حلقه</h5>
+                                    <p class="text-xs text-slate-700">
+                                        با ضربه اول شمشیر، ۵۰ واحد از ۱۰۰ کم می‌شود و عدد داخل جعبه <code dir="ltr" class="ltr-code">50</code> می‌شود. لوزی شرط می‌پرسد: آیا ۵۰ مساوی یا کمتر از صفر است؟ جواب <b>خیر</b> است؛ پس به مرحله حمله برمی‌گردد!
+                                    </p>
+                                </div>
+                                <div class="bg-white border-2 border-emerald-200 rounded-2xl p-4">
+                                    <h5 class="font-black text-emerald-900 text-sm mb-1">🏆 مرحله سوم: ضربه دوم و ترفند هکرها!</h5>
+                                    <p class="text-xs text-slate-700">
+                                        با ضربه دوم، عدد جعبه به <code dir="ltr" class="ltr-code">0</code> می‌رسد و شرط پیروزی برقرار می‌شود. اگر دکمه <b>«⚡ ترفند هکرها»</b> را بزنید، جان غول روی <code dir="ltr" class="ltr-code">1</code> قرار می‌گیرد و با اولین ضربه شکست می‌خورد!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- جدول ردیابی گام‌به‌گام ذهن کامپیوتر -->
+                        <div class="overflow-x-auto bg-white rounded-2xl border border-purple-200">
+                            <table class="booklet-table text-xs md:text-sm">
+                                <thead class="bg-purple-700 text-white">
+                                    <tr>
+                                        <th class="text-right">گام اجرا</th>
+                                        <th class="text-center">شکل فلوچارت</th>
+                                        <th class="text-right">اتفاقی که در بازی می‌افتد</th>
+                                        <th class="text-center">مقدار جعبه <code dir="ltr" class="ltr-code !bg-purple-900 !text-amber-300 !border-purple-500">bossHP</code></th>
+                                        <th class="text-center">کد معادل در پایتون</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-bold">گام ۱</td>
+                                        <td class="text-center">⭕ بیضی شروع</td>
+                                        <td>شروع بازی با کلیک روی پرچم سبز</td>
+                                        <td class="text-center font-bold">—</td>
+                                        <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code"># Start Game</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">گام ۲</td>
+                                        <td class="text-center">▭ مستطیل متغیر</td>
+                                        <td>ساختن جعبه جان غول با مقدار اولیه ۱۰۰</td>
+                                        <td class="text-center font-black text-blue-700">100</td>
+                                        <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">bossHP = 100</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">گام ۳ (دور اول)</td>
+                                        <td class="text-center">▭ مستطیل دستور</td>
+                                        <td>ضربه اول شمشیر! ۵۰ واحد از جان غول کم می‌شود</td>
+                                        <td class="text-center font-black text-amber-600">50</td>
+                                        <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">bossHP = bossHP - 50</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">گام ۴ (دور اول)</td>
+                                        <td class="text-center">🔶 لوزی شرط</td>
+                                        <td>آیا ۵۰ کمتر یا مساوی صفر است؟ <b>خیر!</b> برگشت به حمله</td>
+                                        <td class="text-center font-black text-amber-600">50</td>
+                                        <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">if bossHP &lt;= 0:</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">گام ۳ (دور دوم)</td>
+                                        <td class="text-center">▭ مستطیل دستور</td>
+                                        <td>ضربه دوم شمشیر! ۵۰ واحد دیگر کم می‌شود</td>
+                                        <td class="text-center font-black text-emerald-700">0</td>
+                                        <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">bossHP = bossHP - 50</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">گام آخر</td>
+                                        <td class="text-center">⭕ بیضی پایان</td>
+                                        <td>شرط لوزی برقرار شد (مسیر بله)! پیروزی و پایان بازی</td>
+                                        <td class="text-center font-black text-emerald-700">0</td>
+                                        <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">print("Victory!")</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =============================================================
+                     بخش پنجم: رازهای مخفی کامپیوتر (جستجوی دودویی و ماشین ۴ بیتی)
+                     ============================================================= -->
+                <section class="section-card bg-white rounded-3xl p-6 shadow-md border-2 border-sky-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-sky-600 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow">۵</span>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-sky-950">بخش پنجم: رازهای مخفی کامپیوتر (جستجوی دودویی و ماشین ۴ بیتی)</h3>
+                            <p class="text-xs text-sky-700 font-bold">مقایسه روش حلزون و روش موشک در پیدا کردن عدد ۷۵ + ماشین ۴ بیتی تیم ۴ نفره ما</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-sky-50/70 border-2 border-sky-200 rounded-2xl p-4 mb-6">
+                        <h4 class="font-black text-sky-950 text-sm md:text-base mb-2">
+                            الف — الگوریتم جستجوی دودویی: پیدا کردن عدد ۷۵ بین ۱ تا ۱۰۰
+                        </h4>
+                        <div class="bg-white border border-sky-200 rounded-xl p-3.5 mb-3">
+                            <div class="text-xs font-bold text-slate-700 mb-2">
+                                🎯 <b>قدم اول کامپیوتر:</b> همیشه دقیقاً وسط محدوده ۱ تا ۱۰۰ یعنی عدد <b>۵۰</b> را می‌پرسد. وقتی می‌گویید «عدد من بزرگتر است»، کامپیوتر در یک لحظه نصف اعداد را دور می‌ریزد:
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-11 gap-2 items-center text-center text-xs font-bold">
+                                <div class="md:col-span-5 bg-rose-100 border border-rose-300 text-rose-900 py-2 px-3 rounded-lg">
+                                    ❌ اعداد ۱ تا ۵۰ درجا حذف و دور ریخته می‌شوند!
+                                </div>
+                                <div class="md:col-span-1 bg-amber-400 text-slate-950 py-2 rounded-full font-black">
+                                    ۵۰
+                                </div>
+                                <div class="md:col-span-5 bg-emerald-100 border border-emerald-400 text-emerald-900 py-2 px-3 rounded-lg">
+                                    ✅ اعداد ۵۱ تا ۱۰۰ باقی می‌مانند (قدم دوم: وسط این بخش یعنی ۷۵!)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-center">
+                            <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-3">
+                                <div class="font-black text-emerald-900 text-sm">🚀 روش موشک (جستجوی دودویی — نصف کردن)</div>
+                                <p class="text-xs text-emerald-800 font-bold mt-1">اول ۵۰ را می‌پرسد و در قدم دوم به ۷۵ می‌رسد؛ یعنی فقط با <b>۲ سوال</b> برنده می‌شود!</p>
+                            </div>
+                            <div class="bg-rose-50 border-2 border-rose-300 rounded-xl p-3">
+                                <div class="font-black text-rose-900 text-sm">🐌 روش حلزون (جستجوی خطی — یکی‌یکی شمردن)</div>
+                                <p class="text-xs text-rose-800 font-bold mt-1">از ۱ و ۲ و ۳ شروع می‌کند و باید <b>۷۵ سوال</b> بپرسد تا به عدد ۷۵ برسد!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- شبیه‌ساز ۴: ماشین ۴ بیتی تیم ۴ نفره ما -->
+                    <div class="bg-slate-900 text-white rounded-3xl p-5 shadow-lg">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-700">
+                            <div>
+                                <h4 class="font-black text-amber-300 text-base md:text-lg">💡 ماشین ۴ بیتی تیم ۴ نفره ما (زبان صفر و یک کامپیوتر)</h4>
+                                <p class="text-xs text-slate-300">روی کارت هر دانش‌آموز کلیک کن تا بین حالت <b>ایستاده / روشن (۱)</b> و <b>نشسته / خاموش (۰)</b> تغییر کند!</p>
+                            </div>
+                            <div class="bg-indigo-600/40 border border-indigo-400 rounded-2xl px-4 py-2 text-center">
+                                <span class="text-xs text-indigo-200 block">عدد نهایی ساخته‌شده (از ۰ تا ۱۵):</span>
+                                <span id="binaryTotalDecimal" class="font-black text-2xl text-amber-300 font-mono">5</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" dir="ltr">
+                            <div id="bitCard8" onclick="toggleBinaryBit(8)" class="cursor-pointer rounded-2xl p-4 text-center transition-all border-2 bg-slate-800 border-slate-600 select-none" dir="rtl">
+                                <div class="text-xs font-bold text-slate-300">نفر چهارم تیم</div>
+                                <div class="text-lg font-black text-amber-300 my-1">ارزش ۸</div>
+                                <div id="bitIcon8" class="text-3xl my-2">🪑</div>
+                                <div id="bitState8" class="bg-slate-700 text-slate-200 text-xs font-black py-1 px-2 rounded-lg">
+                                    نشسته / خاموش (۰)
+                                </div>
+                            </div>
+
+                            <div id="bitCard4" onclick="toggleBinaryBit(4)" class="cursor-pointer rounded-2xl p-4 text-center transition-all border-2 bg-emerald-900/60 border-emerald-400 select-none" dir="rtl">
+                                <div class="text-xs font-bold text-emerald-200">نفر سوم تیم</div>
+                                <div class="text-lg font-black text-amber-300 my-1">ارزش ۴</div>
+                                <div id="bitIcon4" class="text-3xl my-2">🧍</div>
+                                <div id="bitState4" class="bg-emerald-500 text-slate-950 text-xs font-black py-1 px-2 rounded-lg">
+                                    ایستاده / روشن (۱)
+                                </div>
+                            </div>
+
+                            <div id="bitCard2" onclick="toggleBinaryBit(2)" class="cursor-pointer rounded-2xl p-4 text-center transition-all border-2 bg-slate-800 border-slate-600 select-none" dir="rtl">
+                                <div class="text-xs font-bold text-slate-300">نفر دوم تیم</div>
+                                <div class="text-lg font-black text-amber-300 my-1">ارزش ۲</div>
+                                <div id="bitIcon2" class="text-3xl my-2">🪑</div>
+                                <div id="bitState2" class="bg-slate-700 text-slate-200 text-xs font-black py-1 px-2 rounded-lg">
+                                    نشسته / خاموش (۰)
+                                </div>
+                            </div>
+
+                            <div id="bitCard1" onclick="toggleBinaryBit(1)" class="cursor-pointer rounded-2xl p-4 text-center transition-all border-2 bg-emerald-900/60 border-emerald-400 select-none" dir="rtl">
+                                <div class="text-xs font-bold text-emerald-200">نفر اول تیم</div>
+                                <div class="text-lg font-black text-amber-300 my-1">ارزش ۱</div>
+                                <div id="bitIcon1" class="text-3xl my-2">🧍</div>
+                                <div id="bitState1" class="bg-emerald-500 text-slate-950 text-xs font-black py-1 px-2 rounded-lg">
+                                    ایستاده / روشن (۱)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 rounded-2xl p-3 flex flex-wrap items-center justify-around gap-3 text-xs md:text-sm">
+                            <div>
+                                <span class="text-slate-300">کد باینری ۴ بیتی:</span>
+                                <code id="binaryStringDisplay" dir="ltr" class="ltr-code !bg-slate-950 !text-amber-300 !border-amber-500/40 text-base ml-2">0101</code>
+                            </div>
+                            <div>
+                                <span class="text-slate-300">محاسبه جمع روشن‌ها:</span>
+                                <code id="binaryMathDisplay" dir="ltr" class="ltr-code !bg-slate-950 !text-emerald-300 !border-emerald-500/40 ml-2">0 + 4 + 0 + 1 = 5</code>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =============================================================
+                     بخش ششم: ماجراجویی جلسه آینده (ورود به پایتون و لاک‌پشت نقاش)
+                     ============================================================= -->
+                <section class="section-card bg-emerald-50/90 rounded-3xl p-6 shadow-md border-2 border-emerald-300">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-emerald-600 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow">۶</span>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-emerald-950">بخش ششم: ماجراجویی جلسه آینده (ورود به پایتون و لاک‌پشت نقاش) 🐍🐢</h3>
+                            <p class="text-xs text-emerald-800 font-bold">جدول ترجمه دستورات فارسی اسکرچ به کد پایتون + آزمایشگاه رسم شکل با حلقه تکرار</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto mb-6">
+                        <table class="booklet-table text-xs md:text-sm bg-white rounded-2xl overflow-hidden">
+                            <thead class="bg-emerald-700 text-white">
+                                <tr>
+                                    <th class="text-right w-1/3">کاری که می‌خواهیم انجام دهیم</th>
+                                    <th class="text-center w-1/3">بلوک فارسی در اسکرچ</th>
+                                    <th class="text-center w-1/3">کد معادل در پایتون</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold">۱۰۰ قدم به جلو حرکت کن</td>
+                                    <td class="text-center"><span class="sb-motion">۱۰۰ گام حرکت کن</span></td>
+                                    <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">t.forward(100)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">۹۰ درجه به سمت راست بچرخ</td>
+                                    <td class="text-center"><span class="sb-motion">۹۰ درجه به راست بچرخ</span></td>
+                                    <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">t.right(90)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">۴ بار دستورات را تکرار کن (حلقه)</td>
+                                    <td class="text-center"><span class="sb-control">۴ بار تکرار کن</span></td>
+                                    <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">for i in range(4):</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">تاس بریز (عدد شانسی بین ۱ تا ۶)</td>
+                                    <td class="text-center"><span class="sb-sensing">انتخاب عدد تصادفی بین ۱ تا ۶</span></td>
+                                    <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">random.randint(1, 6)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">بررسی شرط توسط نگهبان بازی</td>
+                                    <td class="text-center"><span class="sb-control">اگر ... آنگاه ...</span></td>
+                                    <td class="ltr-cell bg-slate-50"><code dir="ltr" class="ltr-code">if ... :</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- شبیه‌ساز ۵: لاک‌پشت نقاش پایتون -->
+                    <div class="bg-white border-2 border-emerald-400 rounded-3xl p-5 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-emerald-100">
+                            <div>
+                                <h4 class="font-black text-emerald-950 text-base">🐢 آزمایشگاه لاک‌پشت پایتون: راز تنبلی برنامه‌نویس‌ها با حلقه تکرار!</h4>
+                                <p class="text-xs text-slate-600">روی دکمه‌های زیر کلیک کن تا ببینی لاک‌پشت پایتون چطور با حلقه تکرار شکل را می‌کشد:</p>
+                            </div>
+                            <div class="no-print flex flex-wrap gap-2">
+                                <button type="button" onclick="drawTurtlePolygon(3)" id="turtleBtn3" class="turtle-shape-btn bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer">
+                                    🔺 کشیدن مثلث با <code dir="ltr" class="ltr-code">range(3)</code>
+                                </button>
+                                <button type="button" onclick="drawTurtlePolygon(4)" id="turtleBtn4" class="turtle-shape-btn bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow cursor-pointer">
+                                    🟦 کشیدن مربع با <code dir="ltr" class="ltr-code">range(4)</code>
+                                </button>
+                                <button type="button" onclick="drawTurtlePolygon(6)" id="turtleBtn6" class="turtle-shape-btn bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer">
+                                    ⬢ کشیدن شش‌ضلعی با <code dir="ltr" class="ltr-code">range(6)</code>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                            <div>
+                                <div class="text-xs font-bold text-slate-600 mb-2">کد پایتون (بدون نیاز به تکرار خط‌ها!):</div>
+                                <pre id="turtleCodePre" dir="ltr" class="ltr-pre text-xs md:text-sm">import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+
+# Repeat 4 times to draw a Square
+for i in range(4):
+    t.forward(100)
+    t.right(90)</pre>
+                                <p class="text-xs text-emerald-900 font-bold mt-3 bg-emerald-100 p-2.5 rounded-xl">
+                                    💡 نکته طلایی برای چالش ششم: عدد داخل <code dir="ltr" class="ltr-code">range(...)</code> همیشه برابر با تعداد ضلع‌های شکل است!
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-200 rounded-2xl p-3">
+                                <canvas id="turtleCanvas" width="260" height="210" class="bg-white rounded-xl border border-slate-200 shadow-inner"></canvas>
+                                <span id="turtleShapeLabel" class="text-xs font-black text-emerald-800 mt-2">شکل رسم‌شده: مربع (۴ ضلعی) با ۴ بار تکرار</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =============================================================
+                     بخش هفتم: چالش‌ها و ارسال مستقیم تکالیف برای مهندس دیلمی
+                     ============================================================= -->
+                <div id="bookletHomeworkSection">
+                    <section class="section-card bg-white rounded-3xl p-6 shadow-xl border-4 border-rose-200">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b-2 border-rose-100">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-rose-600 text-white w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xl shrink-0 shadow">۷</span>
+                                <div>
+                                    <h3 class="text-xl md:text-2xl font-black text-rose-950">بخش هفتم: چالش‌ها و ارسال مستقیم تکالیف برای مهندس دیلمی 🏆</h3>
+                                    <p class="text-xs text-rose-700 font-bold">پاسخ‌هایت را وارد کن و دکمه ارسال در پایین صفحه را بزن تا کارنامه‌ات مستقیماً برای استاد فرستاده شود!</p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-300 px-3.5 py-2 rounded-2xl text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>ارسال مستقیم به پنل مهندس دیلمی (نمره از ۱۰۰)</span>
+                            </div>
+                        </div>
+
+                        <!-- ورودی نام مهندس برنامه‌نویس -->
+                        <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-2">
+                                <span id="formAvatarDisplay" class="text-2xl">🦸‍♂️</span>
+                                <label for="homeworkStudentName" class="font-black text-indigo-950 text-sm md:text-base">
+                                    نام و نام خانوادگی مهندس برنامه‌نویس (الزامی):
+                                </label>
+                            </div>
+                            <input id="homeworkStudentName" type="text" placeholder="نام خودت را اینجا بنویس..." oninput="syncStudentName(this.value)" class="bg-white border-2 border-indigo-300 focus:border-indigo-600 focus:outline-none rounded-xl px-4 py-2 font-black text-slate-900 text-sm w-full md:w-80 shadow-xs" />
+                        </div>
+
+                        <!-- ۶ چالش جزوه شماره ۱ -->
+                        <div class="space-y-6">
+
+                            <!-- چالش ۱ -->
+                            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-black text-slate-900 text-sm md:text-base">🧭 چالش ۱ (محور مختصات): ربات گمشده در نقشه!</h4>
+                                    <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-lg">۲۰ امتیاز</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-slate-700 mb-3">
+                                    گربه اسکرچ در نقطه شروع <code dir="ltr" class="ltr-code">(0, 0)</code> ایستاده است. اگر در بازی موزخوری اول <b>۴ بار کلید چپ</b> (هر بار ۱۰ واحد منفی) و بعد <b>۳ بار کلید پایین</b> (هر بار ۱۰ واحد منفی) را فشار دهد، گربه در چه مختصاتی ایستاده است؟
+                                </p>
+                                <div class="flex flex-wrap items-center gap-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-slate-700">محور افقی <code dir="ltr" class="ltr-code">X</code> =</span>
+                                        <input id="ansQ1X" type="number" dir="ltr" placeholder="مثلاً -40" class="w-28 bg-white border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-3 py-1.5 text-center font-mono font-bold text-sm" />
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-slate-700">محور عمودی <code dir="ltr" class="ltr-code">Y</code> =</span>
+                                        <input id="ansQ1Y" type="number" dir="ltr" placeholder="مثلاً -30" class="w-28 bg-white border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-3 py-1.5 text-center font-mono font-bold text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- چالش ۲ -->
+                            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-black text-slate-900 text-sm md:text-base">🐞 چالش ۲ (باگ‌گیری بازی موزخوری): چرا بازی متوقف شد؟</h4>
+                                    <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-lg">۲۰ امتیاز</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-slate-700 mb-3">
+                                    فرض کن یکی از بچه‌ها کدِ خوردن موز را نوشته است؛ اما وقتی گربه به موز می‌خورد، به جای اینکه امتیازش زیاد شود، درجا کل بازی متوقف می‌شود! به نظرت او کدام دستور دشمن را اشتباهی داخل شرطِ موز گذاشته است؟
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3">
+                                    <label class="flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-amber-400 p-3 rounded-xl cursor-pointer text-xs font-bold">
+                                        <input type="radio" name="ansQ2Choice" value="توقف همه" class="w-4 h-4 accent-rose-600" />
+                                        <span>دستور <span class="sb-control">توقف همه</span></span>
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-amber-400 p-3 rounded-xl cursor-pointer text-xs font-bold">
+                                        <input type="radio" name="ansQ2Choice" value="برو به مکان تصادفی" class="w-4 h-4 accent-rose-600" />
+                                        <span>دستور <span class="sb-motion">برو به مکان تصادفی</span></span>
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-amber-400 p-3 rounded-xl cursor-pointer text-xs font-bold">
+                                        <input type="radio" name="ansQ2Choice" value="۱۰ گام حرکت کن" class="w-4 h-4 accent-rose-600" />
+                                        <span>دستور <span class="sb-motion">۱۰ گام حرکت کن</span></span>
+                                    </label>
+                                </div>
+                                <input id="ansQ2Note" type="text" placeholder="توضیح یا پیام دلخواه تو برای مهندس دیلمی..." class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs" />
+                            </div>
+
+                            <!-- چالش ۳ -->
+                            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-black text-slate-900 text-sm md:text-base">🎨 چالش ۳ (کارت گرافیک انسانی — پیکسل‌آرت ۵×۵)</h4>
+                                    <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-lg">۲۰ امتیاز</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-slate-700 mb-4">
+                                    در جدول زیر، روی هر خانه‌ای که عدد <b>1</b> دارد کلیک کن تا رنگی شود و خانه‌های <b>0</b> را سفید بگذار. سپس بنویس یا انتخاب کن چه شکلی ظاهر شد!
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                                    <div class="md:col-span-5 flex flex-col items-center">
+                                        <div id="pixelArtGrid" class="grid grid-cols-5 gap-1.5 bg-slate-800 p-2.5 rounded-2xl shadow-md" dir="ltr"></div>
+                                        <button type="button" onclick="autoFillOnesPixelArt()" class="no-print mt-2 text-[11px] text-indigo-600 hover:underline font-bold cursor-pointer">
+                                            ✨ راهنما: رنگ کردن خودکار خانه‌های ۱
+                                        </button>
+                                    </div>
+                                    <div class="md:col-span-7 space-y-3">
+                                        <div class="text-xs font-bold text-slate-700">پس از رنگ کردن خانه‌های ۱، چه شکلی در جدول بالا ظاهر شد؟</div>
+                                        <select id="ansQ3Shape" class="w-full bg-white border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-3 py-2 text-xs md:text-sm font-bold">
+                                            <option value="">-- شکل ظاهرشده را انتخاب کن --</option>
+                                            <option value="صورت خندان (لبخند)">😊 صورت خندان (لبخند)</option>
+                                            <option value="موشک فضایی">🚀 موشک فضایی</option>
+                                            <option value="درخت کاج">🌲 درخت کاج</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- چالش ۴ و ۵ -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-black text-slate-900 text-sm md:text-base">🔢 چالش ۴ (رمزگشایی ماشین ۴ بیتی)</h4>
+                                            <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-lg">۲۰ امتیاز</span>
+                                        </div>
+                                        <p class="text-xs text-slate-700 mb-3">
+                                            با استفاده از ارزش‌های <b>۸ و ۴ و ۲ و ۱</b>، حساب کن کد باینری <code dir="ltr" class="ltr-code">1101</code> چه عددی را نشان می‌دهد؟
+                                            <br><span class="text-slate-500">راهنمایی: <code dir="ltr" class="ltr-code">8 + 4 + 0 + 1 = ?</code></span>
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold">عدد نهایی =</span>
+                                        <input id="ansQ4Binary" type="number" dir="ltr" placeholder="؟" class="w-28 bg-white border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-3 py-1.5 text-center font-mono font-bold text-sm" />
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-black text-slate-900 text-sm md:text-base">🏰 چالش ۵ (کامپیوتر انسانی در بازی قلعه باگ‌ها)</h4>
+                                            <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-lg">۲۰ امتیاز</span>
+                                        </div>
+                                        <p class="text-xs text-slate-700 mb-3">
+                                            اگر در شروع بازی جان تو ۱۰ باشد (<code dir="ltr" class="ltr-code">HP = 10</code>) و در خانه قرمز ۴ واحد از آن کم شود (<code dir="ltr" class="ltr-code">HP = HP - 4</code>)، چه عددی در جعبه جان باقی می‌ماند؟
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold">مقدار نهایی جعبه جان =</span>
+                                        <input id="ansQ5HP" type="number" dir="ltr" placeholder="؟" class="w-28 bg-white border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-3 py-1.5 text-center font-mono font-bold text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- چالش ۶ (امتیازی) -->
+                            <div class="bg-amber-50/70 border-2 border-amber-300 rounded-2xl p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-black text-amber-950 text-sm md:text-base">🐢 چالش ۶ (امتیازی پایتون): عدد داخل حلقه لاک‌پشت</h4>
+                                    <span class="text-xs font-bold bg-amber-300 text-slate-950 px-2.5 py-1 rounded-lg">+۱۰ امتیاز جایزه!</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-slate-700 mb-3">
+                                    برای کشیدن یک مربع چهارضلعی، در حلقه پایتون نوشتیم <code dir="ltr" class="ltr-code">for i in range(4):</code>. اگر بخواهیم یک <b>مثلث</b> (سه‌ضلعی) و یک <b>شش‌ضلعی</b> بکشیم، باید عدد داخل <code dir="ltr" class="ltr-code">range</code> را چند بگذاریم؟
+                                </p>
+                                <div class="flex flex-wrap items-center gap-5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold">🔺 عدد برای مثلث =</span>
+                                        <input id="ansQ6Tri" type="number" dir="ltr" placeholder="؟" class="w-24 bg-white border-2 border-amber-400 rounded-xl px-3 py-1.5 text-center font-mono font-bold text-sm" />
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold">⬢ عدد برای شش‌ضلعی =</span>
+                                        <input id="ansQ6Hex" type="number" dir="ltr" placeholder="؟" class="w-24 bg-white border-2 border-amber-400 rounded-xl px-3 py-1.5 text-center font-mono font-bold text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- پیام خطای اعتبارسنجی نام -->
+                        <div id="formValidationError" class="hidden mt-4 bg-rose-100 border-2 border-rose-400 text-rose-900 rounded-2xl p-3 text-xs font-black text-center">
+                            ⚠️ مهندس عزیز، لطفاً اول نام خودت را در کادر بالای فرم بنویس تا مهندس دیلمی بداند این تکلیف متعلق به چه کسی است!
+                        </div>
+
+                        <!-- دکمه ارسال مستقیم به Formspree مهندس دیلمی -->
+                        <div class="no-print mt-6 pt-4 border-t-2 border-rose-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <p class="text-xs text-slate-600 font-bold">
+                                📬 پس از زدن دکمه زیر، پاسخ‌هایت بلافاصله تصحیح شده و به پنل آنلاین <b>مهندس دیلمی</b> ارسال می‌شود.
+                            </p>
+                            <button id="submitHomeworkBtn" type="button" onclick="submitStudentHomeworkToFormspree()" class="w-full sm:w-auto bg-gradient-to-l from-rose-600 via-pink-600 to-indigo-700 hover:from-rose-700 hover:to-indigo-800 text-white font-black px-7 py-4 rounded-2xl text-sm md:text-base shadow-xl transition flex items-center justify-center gap-2 cursor-pointer">
+                                <span>🚀</span>
+                                <span id="submitBtnLabel">ثبت و ارسال نهایی تکالیف برای مهندس دیلمی</span>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- =====================================================================
+         مودال جشن و تایید ارسال به Formspree مهندس دیلمی
+         ===================================================================== -->
+    <div id="celebrationModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs hidden items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border-4 border-indigo-500">
+            <div class="text-5xl mb-2">🎉🏆🚀</div>
+            <h3 id="modalTitle" class="text-xl font-black text-indigo-950 mb-1">آفرین مهندس برنامه‌نویس!</h3>
+            <p id="modalSubtitle" class="text-xs text-emerald-700 font-bold mb-4 bg-emerald-50 border border-emerald-200 py-2 px-3 rounded-xl">
+                ✅ پاسخ‌های تو با موفقیت به پنل آنلاین <b>مهندس دیلمی</b> ارسال شد!
+            </p>
+
+            <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 mb-4">
+                <div class="text-xs font-bold text-indigo-800">نمره محاسبه‌شده تو در جزوه شماره ۱:</div>
+                <div id="modalScoreBadge" class="text-3xl font-black text-indigo-700 my-1">۱۰۰ از ۱۰۰</div>
+                <div id="modalFeedbackList" class="text-right text-xs space-y-1.5 mt-3 pt-2 border-t border-indigo-200 text-slate-700"></div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <button type="button" onclick="copyStudentReportCard()" id="copyReportBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow cursor-pointer">
+                    📋 کپی متن کارنامه
+                </button>
+                <button type="button" onclick="closeCelebrationModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow cursor-pointer">
+                    عالی بود! بستن پنجره
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         اسکریپت‌های سبک، سریع و بدون کرش
+         ===================================================================== -->
+    <script>
+        const FORMSPREE_URL = "https://formspree.io/f/xjyyzdde";
+        let selectedAvatar = "🦸‍♂️";
+        let lastReportText = "";
+
+        // ۱. جابجایی بین صفحه اول (Home) و نمای جزوه شماره ۱ (Booklet)
+        function switchPortalView(viewName) {
+            const vHome = document.getElementById('portalViewHome');
+            const vBooklet = document.getElementById('portalViewBooklet');
+            const btnHome = document.getElementById('navBtnHome');
+            const btnBooklet = document.getElementById('navBtnBooklet');
+
+            const activeClass = "px-4 py-2 rounded-xl font-black text-xs md:text-sm transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-md cursor-pointer";
+            const inactiveClass = "px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer";
+
+            if (viewName === 'booklet') {
+                vHome.classList.add('hidden');
+                vBooklet.classList.remove('hidden');
+                btnHome.className = inactiveClass;
+                btnBooklet.className = activeClass;
+                drawTurtlePolygon(4);
+            } else {
+                vBooklet.classList.add('hidden');
+                vHome.classList.remove('hidden');
+                btnHome.className = activeClass;
+                btnBooklet.className = inactiveClass;
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToHomeworkSection() {
+            switchPortalView('booklet');
+            setTimeout(() => {
+                const el = document.getElementById('bookletHomeworkSection');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 80);
+        }
+
+        function syncStudentName(val) {
+            const inputs = ['globalStudentName', 'headerStudentNameInput', 'homeworkStudentName'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value !== val) el.value = val;
+            });
+        }
+
+        function selectAvatar(emoji) {
+            selectedAvatar = emoji;
+            const disp = document.getElementById('formAvatarDisplay');
+            if (disp) disp.innerText = emoji;
+            document.querySelectorAll('.avatar-btn').forEach(btn => {
+                btn.className = (btn.innerText === emoji)
+                    ? "avatar-btn bg-indigo-600 px-2 py-1 rounded-lg border border-amber-300 cursor-pointer"
+                    : "avatar-btn bg-slate-800 hover:bg-indigo-600 px-2 py-1 rounded-lg border border-transparent cursor-pointer";
+            });
+        }
+
+        // ۲. شبیه‌ساز اول: محور مختصات افقی و عمودی
+        let catCoordX = 0;
+        let catCoordY = 0;
+
+        function moveCoordCat(dx, dy) {
+            catCoordX = Math.max(-50, Math.min(50, catCoordX + dx));
+            catCoordY = Math.max(-50, Math.min(50, catCoordY + dy));
+            updateCoordPlaygroundUI();
+        }
+
+        function resetCoordCat() {
+            catCoordX = 0;
+            catCoordY = 0;
+            updateCoordPlaygroundUI();
+        }
+
+        function updateCoordPlaygroundUI() {
+            const sprite = document.getElementById('coordCatSprite');
+            const bubble = document.getElementById('coordCatBubble');
+            const xVal = document.getElementById('coordXVal');
+            const yVal = document.getElementById('coordYVal');
+            const quadText = document.getElementById('coordQuadrantText');
+            if (!sprite) return;
+
+            const leftPercent = 50 + (catCoordX * 0.78);
+            const topPercent = 50 - (catCoordY * 0.78);
+
+            sprite.style.left = leftPercent + '%';
+            sprite.style.top = topPercent + '%';
+            bubble.innerText = `(${catCoordX}, ${catCoordY})`;
+            xVal.innerText = catCoordX > 0 ? `+${catCoordX}` : `${catCoordX}`;
+            yVal.innerText = catCoordY > 0 ? `+${catCoordY}` : `${catCoordY}`;
+
+            if (catCoordX === 0 && catCoordY === 0) {
+                quadText.innerText = "🎯 مرکز صفحه (نقطه شروع صفر و صفر)";
+            } else if (catCoordX > 0 && catCoordY > 0) {
+                quadText.innerText = "🟢 ناحیه اول (راست و بالا: افقی مثبت، عمودی مثبت)";
+            } else if (catCoordX < 0 && catCoordY > 0) {
+                quadText.innerText = "🔵 ناحیه دوم (چپ و بالا: افقی منفی، عمودی مثبت)";
+            } else if (catCoordX < 0 && catCoordY < 0) {
+                quadText.innerText = "🔴 ناحیه سوم (چپ و پایین: افقی منفی، عمودی منفی)";
+            } else if (catCoordX > 0 && catCoordY < 0) {
+                quadText.innerText = "🟡 ناحیه چهارم (راست و پایین: افقی مثبت، عمودی منفی)";
+            } else {
+                quadText.innerText = "⚡ دقیقاً روی خط محور ایستاده است!";
+            }
+        }
+
+        // ۳. شبیه‌ساز دوم: بازی موزخوری و فرار از دشمن در اسکرچ
+        let bananaGameRunning = false;
+        let bananaScore = 0;
+        let mCat = { x: 50, y: 50 };
+        let mBanana = { x: 78, y: 28 };
+        let mEnemy = { x: 15, y: 20 };
+        let bananaTimer = null;
+
+        function toggleBananaMiniGame() {
+            const overlay = document.getElementById('bananaOverlay');
+            const startBtn = document.getElementById('bananaStartBtn');
+
+            if (bananaGameRunning) {
+                stopBananaMiniGame("⏸️ بازی متوقف شد. برای شروع مجدد کلیک کن!");
+                return;
+            }
+
+            bananaGameRunning = true;
+            bananaScore = 0;
+            mCat = { x: 50, y: 50 };
+            mBanana = { x: 78, y: 28 };
+            mEnemy = { x: 12, y: 18 };
+            document.getElementById('bananaGameScore').innerText = bananaScore;
+            overlay.classList.add('hidden');
+            startBtn.innerText = "🛑 توقف بازی";
+            renderMiniArena();
+
+            bananaTimer = setInterval(() => {
+                if (!bananaGameRunning) return;
+                const dx = mCat.x - mEnemy.x;
+                const dy = mCat.y - mEnemy.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                mEnemy.x += (dx / dist) * 1.65;
+                mEnemy.y += (dy / dist) * 1.65;
+
+                checkMiniCollisions();
+                renderMiniArena();
+            }, 60);
+        }
+
+        function stopBananaMiniGame(msg) {
+            bananaGameRunning = false;
+            if (bananaTimer) clearInterval(bananaTimer);
+            const overlay = document.getElementById('bananaOverlay');
+            const overlayText = document.getElementById('bananaOverlayText');
+            const startBtn = document.getElementById('bananaStartBtn');
+            overlay.classList.remove('hidden');
+            overlayText.innerText = msg;
+            startBtn.innerText = "🚩 شروع مجدد بازی (پرچم سبز)";
+        }
+
+        function nudgeMiniCat(dx, dy) {
+            if (!bananaGameRunning) return;
+            mCat.x = Math.max(6, Math.min(94, mCat.x + dx * 0.45));
+            mCat.y = Math.max(10, Math.min(90, mCat.y + dy * 0.45));
+            checkMiniCollisions();
+            renderMiniArena();
+        }
+
+        function checkMiniCollisions() {
+            const distBanana = Math.hypot(mCat.x - mBanana.x, mCat.y - mBanana.y);
+            if (distBanana < 11) {
+                bananaScore += 1;
+                document.getElementById('bananaGameScore').innerText = bananaScore;
+                mBanana.x = Math.floor(Math.random() * 76) + 12;
+                mBanana.y = Math.floor(Math.random() * 72) + 14;
+            }
+            const distEnemy = Math.hypot(mCat.x - mEnemy.x, mCat.y - mEnemy.y);
+            if (distEnemy < 9.5) {
+                stopBananaMiniGame(`👾 دشمن به گربه رسید و دستور «توقف همه» اجرا شد! امتیاز تو: ${bananaScore}`);
+            }
+        }
+
+        function renderMiniArena() {
+            const catEl = document.getElementById('miniCat');
+            const banEl = document.getElementById('miniBanana');
+            const eneEl = document.getElementById('miniEnemy');
+            if (!catEl) return;
+            catEl.style.left = mCat.x + '%';
+            catEl.style.top = mCat.y + '%';
+            banEl.style.left = mBanana.x + '%';
+            banEl.style.top = mBanana.y + '%';
+            eneEl.style.left = mEnemy.x + '%';
+            eneEl.style.top = mEnemy.y + '%';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!bananaGameRunning) return;
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                if (e.key === 'ArrowUp') nudgeMiniCat(0, -14);
+                if (e.key === 'ArrowDown') nudgeMiniCat(0, 14);
+                if (e.key === 'ArrowRight') nudgeMiniCat(14, 0);
+                if (e.key === 'ArrowLeft') nudgeMiniCat(-14, 0);
+            }
+        });
+
+        // ۴. شبیه‌ساز سوم: فلوچارت مبارزه با غول
+        const bossFlowTimeline = [
+            { node: 0, title: "۱. بیضی شروع بازی (پرچم سبز)", hp: 100, code: "# Start Boss Fight" },
+            { node: 1, title: "۲. ساخت جعبه متغیر جان غول", hp: 100, code: "bossHP = 100" },
+            { node: 2, title: "۳. ضربه اول شمشیر (کم شدن ۵۰ واحد)", hp: 50, code: "bossHP = bossHP - 50" },
+            { node: 3, title: "۴. بررسی شرط: آیا ۵۰ مساوی یا کمتر از صفر است؟", hp: 50, code: "if bossHP <= 0:  # False" },
+            { node: 4, title: "۵. مسیر خیر: غول زنده است! برگشت به حمله", hp: 50, code: "else: keep_fighting()" },
+            { node: 2, title: "۳. ضربه دوم شمشیر (کم شدن ۵۰ واحد دیگر)", hp: 0, code: "bossHP = bossHP - 50" },
+            { node: 3, title: "۴. بررسی شرط: آیا ۰ مساوی یا کمتر از صفر است؟ بله!", hp: 0, code: "if bossHP <= 0:  # True!" },
+            { node: 5, title: "۶. بیضی پایان: پیروزی و پایان بازی 🎉", hp: 0, code: "print('Victory!')" }
+        ];
+        let currentBossStep = 0;
+
+        function renderBossFlowState(customState) {
+            for (let i = 0; i <= 5; i++) {
+                const el = document.getElementById('bfNode' + i);
+                if (el) el.classList.remove('flow-node-active');
+            }
+            const state = customState || bossFlowTimeline[currentBossStep];
+            const activeEl = document.getElementById('bfNode' + state.node);
+            if (activeEl) activeEl.classList.add('flow-node-active');
+
+            document.getElementById('bossSimStepName').innerText = state.title;
+            document.getElementById('bossSimHPText').innerText = `${state.hp} / 100`;
+            document.getElementById('bossSimHPBar').style.width = `${Math.max(0, state.hp)}%`;
+            document.getElementById('bossSimPython').innerText = state.code;
+        }
+
+        function stepBossFlow(dir) {
+            currentBossStep = (currentBossStep + dir + bossFlowTimeline.length) % bossFlowTimeline.length;
+            renderBossFlowState();
+        }
+
+        function resetBossFlow() {
+            currentBossStep = 0;
+            renderBossFlowState();
+        }
+
+        function hackBossHP() {
+            renderBossFlowState({
+                node: 5,
+                title: "⚡ ترفند هکرها اجرا شد! جان غول روی ۱ قرار گرفت و با اولین ضربه شکست خورد!",
+                hp: 0,
+                code: "bossHP = 1  # Hacked! -> Victory!"
+            });
+        }
+
+        // ۵. شبیه‌ساز چهارم: ماشین ۴ بیتی تیم ۴ نفره
+        const binaryBits = { 8: 0, 4: 1, 2: 0, 1: 1 };
+
+        function toggleBinaryBit(weight) {
+            binaryBits[weight] = binaryBits[weight] === 1 ? 0 : 1;
+            updateBinaryMachineUI();
+        }
+
+        function updateBinaryMachineUI() {
+            const weights = [8, 4, 2, 1];
+            let total = 0;
+            let binStr = '';
+            let mathParts = [];
+
+            weights.forEach(w => {
+                const isOn = binaryBits[w] === 1;
+                if (isOn) total += w;
+                binStr += isOn ? '1' : '0';
+                mathParts.push(isOn ? `${w}` : '0');
+
+                const card = document.getElementById('bitCard' + w);
+                const icon = document.getElementById('bitIcon' + w);
+                const state = document.getElementById('bitState' + w);
+                if (!card) return;
+
+                if (isOn) {
+                    card.className = "cursor-pointer rounded-2xl p-4 text-center transition-all border-2 bg-emerald-900/60 border-emerald-400 select-none";
+                    icon.innerText = "🧍";
+                    state.className = "bg-emerald-500 text-slate-950 text-xs font-black py-1 px-2 rounded-lg";
+                    state.innerText = "ایستاده / روشن (۱)";
+                } else {
+                    card.className = "cursor-pointer rounded-2xl p-4 text-center transition-all border-2 bg-slate-800 border-slate-600 select-none";
+                    icon.innerText = "🪑";
+                    state.className = "bg-slate-700 text-slate-200 text-xs font-black py-1 px-2 rounded-lg";
+                    state.innerText = "نشسته / خاموش (۰)";
+                }
+            });
+
+            document.getElementById('binaryTotalDecimal').innerText = total;
+            document.getElementById('binaryStringDisplay').innerText = binStr;
+            document.getElementById('binaryMathDisplay').innerText = `${mathParts.join(' + ')} = ${total}`;
+        }
+
+        // ۶. شبیه‌ساز پنجم: لاک‌پشت نقاش پایتون
+        function drawTurtlePolygon(sides) {
+            const canvas = document.getElementById('turtleCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const angleDeg = Math.round(360 / sides);
+            const shapeNames = { 3: 'مثلث (۳ ضلعی)', 4: 'مربع (۴ ضلعی)', 6: 'شش‌ضلعی (۶ ضلعی)' };
+
+            document.getElementById('turtleCodePre').innerText =
+`import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+
+# Repeat ${sides} times
+for i in range(${sides}):
+    t.forward(100)
+    t.right(${angleDeg})`;
+
+            document.getElementById('turtleShapeLabel').innerText = `شکل رسم‌شده: ${shapeNames[sides]} با range(${sides})`;
+
+            [3, 4, 6].forEach(s => {
+                const btn = document.getElementById('turtleBtn' + s);
+                if (btn) {
+                    btn.className = s === sides
+                        ? "turtle-shape-btn bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow cursor-pointer"
+                        : "turtle-shape-btn bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer";
+                }
+            });
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2 + 6;
+            const radius = 68;
+            ctx.strokeStyle = '#059669';
+            ctx.lineWidth = 4;
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
+            ctx.beginPath();
+
+            for (let i = 0; i <= sides; i++) {
+                const theta = (i * 2 * Math.PI / sides) - (Math.PI / 2);
+                const x = cx + radius * Math.cos(theta);
+                const y = cy + radius * Math.sin(theta);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.font = '20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🐢', cx, cy - radius);
+        }
+
+        // ۷. پیکسل‌آرت ۵×۵ و ارسال مستقیم تکالیف به Formspree مهندس دیلمی
+        const targetPixelPattern = [
+            [0, 1, 0, 1, 0],
+            [0, 1, 0, 1, 0],
+            [0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 1],
+            [0, 1, 1, 1, 0]
+        ];
+        let studentPixelState = [
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+
+        function initPixelArtGrid() {
+            const container = document.getElementById('pixelArtGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    const bitVal = targetPixelPattern[r][c];
+                    const isColored = studentPixelState[r][c] === 1;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.innerText = bitVal;
+                    btn.className = isColored
+                        ? "w-10 h-10 rounded-lg font-mono font-black text-sm bg-amber-400 text-slate-950 border-2 border-white shadow cursor-pointer transition"
+                        : "w-10 h-10 rounded-lg font-mono font-bold text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 cursor-pointer transition";
+                    btn.onclick = () => {
+                        studentPixelState[r][c] = studentPixelState[r][c] === 1 ? 0 : 1;
+                        initPixelArtGrid();
+                    };
+                    container.appendChild(btn);
+                }
+            }
+        }
+
+        function autoFillOnesPixelArt() {
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    studentPixelState[r][c] = targetPixelPattern[r][c];
+                }
+            }
+            initPixelArtGrid();
+        }
+
+        async function submitStudentHomeworkToFormspree() {
+            const studentName = document.getElementById('homeworkStudentName').value.trim();
+            const errBox = document.getElementById('formValidationError');
+
+            if (!studentName) {
+                errBox.classList.remove('hidden');
+                document.getElementById('homeworkStudentName').focus();
+                return;
+            }
+            errBox.classList.add('hidden');
+
+            const timeNowFa = new Date().toLocaleString('fa-IR');
+
+            const q1X = parseInt(document.getElementById('ansQ1X').value, 10);
+            const q1Y = parseInt(document.getElementById('ansQ1Y').value, 10);
+            const q2Radio = document.querySelector('input[name="ansQ2Choice"]:checked');
+            const q2Choice = q2Radio ? q2Radio.value : 'بدون انتخاب';
+            const q2Note = document.getElementById('ansQ2Note').value.trim();
+            const q3Shape = document.getElementById('ansQ3Shape').value || 'بدون انتخاب';
+            const q4Binary = parseInt(document.getElementById('ansQ4Binary').value, 10);
+            const q5HP = parseInt(document.getElementById('ansQ5HP').value, 10);
+            const q6Tri = parseInt(document.getElementById('ansQ6Tri').value, 10);
+            const q6Hex = parseInt(document.getElementById('ansQ6Hex').value, 10);
+
+            const c1Correct = (q1X === -40 && q1Y === -30);
+            const c2Correct = (q2Choice === 'توقف همه');
+            const c3Correct = (q3Shape === 'صورت خندان (لبخند)');
+            const c4Correct = (q4Binary === 13);
+            const c5Correct = (q5HP === 6);
+            const c6Correct = (q6Tri === 3 && q6Hex === 6);
+
+            let scoreOut100 = 0;
+            if (c1Correct) scoreOut100 += 20;
+            if (c2Correct) scoreOut100 += 20;
+            if (c3Correct) scoreOut100 += 20;
+            if (c4Correct) scoreOut100 += 20;
+            if (c5Correct) scoreOut100 += 20;
+            if (c6Correct) scoreOut100 += 10;
+
+            const emojiGridString = studentPixelState.map(row =>
+                row.map(cell => cell === 1 ? '⬛' : '⬜').join('')
+            ).join('\n');
+
+            const formspreePayload = {
+                _subject: `تکلیف جزوه شماره ۱ از ${studentName} (نمره: ${scoreOut100} از ۱۰۰)`,
+                نام_دانش_آموز: `${selectedAvatar} ${studentName}`,
+                جزوه: "جزوه شماره ۱ — از اسکرچ تا پایتون (آبان ۱۴۰۵)",
+                نمره_کل: `${scoreOut100} از ۱۰۰`,
+                چالش_۱_مختصات: `X = ${isNaN(q1X) ? 'خالی' : q1X} , Y = ${isNaN(q1Y) ? 'خالی' : q1Y} [${c1Correct ? '✅ درست (-40, -30)' : '❌ نیاز به بررسی'}]`,
+                چالش_۲_باگ_موزخوری: `${q2Choice} [${c2Correct ? '✅ درست (توقف همه)' : '❌ اشتباه'}] — پیام دانش‌آموز: ${q2Note || 'ندارد'}`,
+                چالش_۳_پیکسل_آرت: `شکل انتخابی: ${q3Shape} [${c3Correct ? '✅ درست' : '❌ اشتباه'}]\n${emojiGridString}`,
+                چالش_۴_ماشین_۴_بیتی_۱۱۰۱: `${isNaN(q4Binary) ? 'خالی' : q4Binary} [${c4Correct ? '✅ درست (13)' : '❌ اشتباه'}]`,
+                چالش_۵_قلعه_باگ_ها: `${isNaN(q5HP) ? 'خالی' : q5HP} [${c5Correct ? '✅ درست (6)' : '❌ اشتباه'}]`,
+                چالش_۶_امتیازی_حلقه_پایتون: `مثلث: ${isNaN(q6Tri) ? 'خالی' : q6Tri} | شش‌ضلعی: ${isNaN(q6Hex) ? 'خالی' : q6Hex} [${c6Correct ? '🌟 +۱۰ امتیاز جایزه' : 'بدون امتیاز جایزه'}]`,
+                زمان_ثبت: timeNowFa
+            };
+
+            const feedbackHtml = `
+                <div>${c1Correct ? '✅' : '❌'} <b>چالش ۱ (مختصات):</b> پاسخ صحیح <code dir="ltr" class="ltr-code">(-40, -30)</code></div>
+                <div>${c2Correct ? '✅' : '❌'} <b>چالش ۲ (باگ موزخوری):</b> دستور «توقف همه»</div>
+                <div>${c3Correct ? '✅' : '❌'} <b>چالش ۳ (پیکسل‌آرت):</b> صورت خندان (لبخند 😊)</div>
+                <div>${c4Correct ? '✅' : '❌'} <b>چالش ۴ (ماشین ۴ بیتی):</b> کد 1101 برابر با عدد <b>13</b> است</div>
+                <div>${c5Correct ? '✅' : '❌'} <b>چالش ۵ (قلعه باگ‌ها):</b> مقدار نهایی <code dir="ltr" class="ltr-code">HP = 6</code></div>
+                <div>${c6Correct ? '🌟' : '⚪'} <b>چالش ۶ (امتیازی پایتون):</b> مثلث <b>3</b> و شش‌ضلعی <b>6</b></div>
+            `;
+
+            lastReportText = `کارنامه ${studentName} (جزوه شماره ۱) — نمره: ${scoreOut100} از ۱۰۰\n۱. مختصات: (${q1X}, ${q1Y})\n۲. باگ موزخوری: ${q2Choice}\n۳. پیکسل‌آرت: ${q3Shape}\n۴. باینری ۱۱۰۱: ${q4Binary}\n۵. قلعه باگ‌ها: ${q5HP}\n۶. حلقه پایتون: مثلث=${q6Tri}, شش‌ضلعی=${q6Hex}`;
+
+            const btn = document.getElementById('submitHomeworkBtn');
+            const btnLabel = document.getElementById('submitBtnLabel');
+            btn.disabled = true;
+            btnLabel.innerText = "⏳ در حال ارسال مستقیم به پنل مهندس دیلمی...";
+
+            let sentOk = false;
+            try {
+                const response = await fetch(FORMSPREE_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(formspreePayload)
+                });
+                sentOk = response.ok;
+            } catch (err) {
+                console.warn("Formspree request warning:", err);
+            }
+
+            btn.disabled = false;
+            btnLabel.innerText = "ثبت و ارسال نهایی تکالیف برای مهندس دیلمی";
+
+            document.getElementById('modalTitle').innerText = `آفرین مهندس ${studentName}!`;
+            document.getElementById('modalSubtitle').innerHTML = sentOk
+                ? `✅ پاسخ‌های تو با موفقیت به پنل آنلاین <b>مهندس دیلمی</b> ارسال شد!`
+                : `✅ کارنامه تو محاسبه شد! (می‌توانی دکمه کپی کارنامه را هم بزنی و برای مهندس دیلمی بفرستی)`;
+            document.getElementById('modalScoreBadge').innerText = `${scoreOut100} از ۱۰۰`;
+            document.getElementById('modalFeedbackList').innerHTML = feedbackHtml;
+
+            const modal = document.getElementById('celebrationModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCelebrationModal() {
+            const modal = document.getElementById('celebrationModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyStudentReportCard() {
+            const temp = document.createElement('textarea');
+            temp.value = lastReportText || 'کارنامه ثبت شد.';
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            const btn = document.getElementById('copyReportBtn');
+            btn.innerText = "✅ کارنامه کپی شد!";
+            setTimeout(() => { btn.innerText = "📋 کپی متن کارنامه"; }, 3000);
+        }
+
+        // ۸. چاپ استاندارد A4 و دانلود فایل Word (.doc)
+        function triggerPrintBooklet() {
+            switchPortalView('booklet');
+            setTimeout(() => {
+                window.print();
+            }, 150);
+        }
+
+        function exportBookletToWord() {
+            const area = document.getElementById('printableBookletArea');
+            if (!area) return;
+            const wordHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                      xmlns:w="urn:schemas-microsoft-com:office:word"
+                      xmlns="http://www.w3.org/TR/REC-html40" lang="fa" dir="rtl">
+                <head>
+                    <meta charset="utf-8">
+                    <title>جزوه شماره ۱ - مهندس دیلمی</title>
+                    <style>
+                        body { font-family: Tahoma, Arial, sans-serif; direction: rtl; text-align: right; line-height: 1.75; }
+                        table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+                        th, td { border: 1px solid #64748b; padding: 8px; }
+                        code, pre { direction: ltr; unicode-bidi: embed; font-family: Consolas, monospace; background: #f1f5f9; padding: 2px 6px; }
+                    </style>
+                </head>
+                <body>${area.innerHTML}</body>
+                </html>
+            `;
+            const blob = new Blob(['\ufeff', wordHtml], { type: 'application/msword;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Jozveh_1_Mohandes_Deilami.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // مقداردهی اولیه هنگام باز شدن صفحه
+        window.onload = function() {
+            updateCoordPlaygroundUI();
+            renderBossFlowState();
+            updateBinaryMachineUI();
+            drawTurtlePolygon(4);
+            initPixelArtGrid();
+        };
+    </script>
+</body>
+</html>
